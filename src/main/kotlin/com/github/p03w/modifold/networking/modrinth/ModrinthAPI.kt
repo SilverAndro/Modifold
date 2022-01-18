@@ -5,11 +5,9 @@ import com.github.p03w.modifold.networking.curseforge.CurseforgeFile
 import com.github.p03w.modifold.networking.curseforge.CurseforgeProject
 import com.google.gson.GsonBuilder
 import io.ktor.client.request.*
-import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.core.*
-import kotlinx.coroutines.runBlocking
 import java.net.URL
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -40,53 +38,37 @@ object ModrinthAPI : APIInterface(380.milliseconds) {
     }
 
     fun makeMod(create: ModrinthModCreate, project: CurseforgeProject): ModrinthMod {
-        return runBlocking {
-            waitUntilCanSend()
-            return@runBlocking client.submitForm("https://api.modrinth.com/api/v1/mod") {
-                attachAuth()
+        return postForm("https://api.modrinth.com/api/v1/mod") {
+            append("data", GsonBuilder().serializeNulls().create().toJson(create))
 
-                body = MultiPartFormDataContent(
-                    formData {
-                        append("data", GsonBuilder().serializeNulls().create().toJson(create))
-
-                        appendInput("icon", headersOf(HttpHeaders.ContentDisposition, "filename=icon.png")) {
-                            buildPacket {
-                                writeFully(URL(project.attachments[0].url).openStream().readAllBytes())
-                            }
-                        }
-                    }
-                )
+            appendInput("icon", headersOf(HttpHeaders.ContentDisposition, "filename=icon.png")) {
+                buildPacket {
+                    writeFully(
+                        URL(project.attachments.first { it.isDefault }.url)
+                            .openStream()
+                            .readAllBytes()
+                    )
+                }
             }
         }
     }
 
     fun makeModVersion(mod: ModrinthMod, file: CurseforgeFile, project: CurseforgeProject) {
-        runBlocking {
-            waitUntilCanSend()
-            client.submitForm<HttpResponse>(
-                "https://api.modrinth.com/api/v1/version"
-            ) {
-                attachAuth()
+        postForm<HttpResponse>("https://api.modrinth.com/api/v1/version") {
+            val upload = ModrinthVersionUpload(
+                mod.id,
+                listOf("${file.fileName}-0"),
+                SEMVER.find(file.fileName.removeSuffix(".jar"))?.value ?: file.fileName.removeSuffix(".jar"),
+                file.displayName,
+                "Transferred automatically from https://www.curseforge.com/minecraft/mc-mods/${project.slug}/files/${file.id}",
+                file.gameVersion.filter { MC_SEMVER.matches(it) }
+            )
+            append("data", GsonBuilder().serializeNulls().create().toJson(upload))
 
-                body = MultiPartFormDataContent(
-                    formData {
-                        val upload = ModrinthVersionUpload(
-                            mod.id,
-                            listOf("${file.fileName}-0"),
-                            SEMVER.find(file.fileName.removeSuffix(".jar"))?.value ?: file.fileName.removeSuffix(".jar"),
-                            file.displayName,
-                            "Transferred automatically from https://www.curseforge.com/minecraft/mc-mods/${project.slug}/files/${file.id}",
-                            file.gameVersion.filter { MC_SEMVER.matches(it) }
-                        )
-                        append("data", GsonBuilder().serializeNulls().create().toJson(upload))
-
-                        appendInput("${file.fileName}-0", headersOf(HttpHeaders.ContentDisposition, "filename=${file.fileName}"), file.fileLength) {
-                            buildPacket {
-                                writeFully(URL(file.downloadUrl).openStream().readAllBytes())
-                            }
-                        }
-                    }
-                )
+            appendInput("${file.fileName}-0", headersOf(HttpHeaders.ContentDisposition, "filename=${file.fileName}"), file.fileLength) {
+                buildPacket {
+                    writeFully(URL(file.downloadUrl).openStream().readAllBytes())
+                }
             }
         }
     }

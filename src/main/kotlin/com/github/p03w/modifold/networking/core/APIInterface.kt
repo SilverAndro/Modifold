@@ -4,6 +4,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.features.json.*
 import io.ktor.client.request.*
+import io.ktor.client.request.forms.*
 import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration
 
@@ -28,6 +29,23 @@ abstract class APIInterface(delay: Duration) {
         return runBlocking {
             waitUntilCanSend()
             return@runBlocking client.get(url) { attachAuth() }
+        }
+    }
+
+    inline fun <reified T: Any>postForm(url: String, crossinline action: FormBuilder.()->Unit): T {
+        return runBlocking {
+            waitUntilCanSend()
+            return@runBlocking client.submitForm(
+                url
+            ) {
+                attachAuth()
+
+                body = MultiPartFormDataContent(
+                    formData {
+                        action()
+                    }
+                )
+            }
         }
     }
 }
