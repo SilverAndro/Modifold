@@ -21,12 +21,13 @@ class ModifoldArgs(parser: ArgParser) {
 
     val noVerifyExisting by parser.flagging(
         "--no_verify_existing",
-        help = "If the initial setup of checking for possibly matching projects should be skipped. Use this if you're new to modrinth and know theres nothing there"
+        help = "If the initial setup of checking for possibly matching projects should be skipped. " +
+                "Use this if you're new to modrinth and know theres nothing there that would match"
     )
 
     val curseforgeSpeed by parser.storing(
         "-s", "--speed",
-        help = "Speed at which to make requests to curseforge, in ms delay between requests. " +
+        help = "Speed at which to make requests to curseforge, in minimum ms delay between requests. " +
                 "Curseforge doesn't document their rate-limits so this is my solution. " +
                 "Defaults to 2000ms (2 seconds)"
     ) { toInt() }.default(2000)
