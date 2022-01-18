@@ -32,12 +32,10 @@ abstract class APIInterface(delay: Duration) {
         }
     }
 
-    inline fun <reified T: Any>postForm(url: String, crossinline action: FormBuilder.()->Unit): T {
+    inline fun <reified T: Any> postForm(url: String, crossinline action: FormBuilder.()->Unit): T {
         return runBlocking {
             waitUntilCanSend()
-            return@runBlocking client.submitForm(
-                url
-            ) {
+            return@runBlocking client.submitForm(url) {
                 attachAuth()
 
                 body = MultiPartFormDataContent(
