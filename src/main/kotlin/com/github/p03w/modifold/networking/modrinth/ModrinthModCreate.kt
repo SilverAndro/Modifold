@@ -1,5 +1,6 @@
 package com.github.p03w.modifold.networking.modrinth
 
+import com.github.p03w.modifold.Global
 import com.github.p03w.modifold.networking.curseforge.CurseforgeProject
 
 data class ModrinthModCreate(
@@ -27,12 +28,10 @@ data class ModrinthModCreate(
                 mod_name = curseforgeProject.name,
                 mod_slug = curseforgeProject.slug,
                 mod_description = curseforgeProject.summary,
-                license_id = "mpl",
-                discord_url = "https://discord.gg/PZAunp345q",
+                license_id = Global.args.defaultLicense,
+                discord_url = Global.args.discordServer,
                 team_members = listOf(ModrinthTeamMember(user.id, user.username, "Owner"))
             )
         }
     }
 }
-
-data class ModrinthTeamMember(val id: String, val name: String, val role: String)

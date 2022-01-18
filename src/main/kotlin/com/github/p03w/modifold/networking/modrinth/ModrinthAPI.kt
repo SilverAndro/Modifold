@@ -8,7 +8,6 @@ import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
-import io.ktor.utils.io.*
 import io.ktor.utils.io.core.*
 import kotlinx.coroutines.runBlocking
 import java.net.URL
@@ -21,6 +20,11 @@ object ModrinthAPI : APIInterface(380.milliseconds) {
         headers {
             append("Authorization", AuthToken)
         }
+    }
+
+    fun getPossibleLicenses(): List<String> {
+        val shortLicenses = getWithoutAuth<List<ModrinthShortLicense>>("https://api.modrinth.com/api/v1/tag/license")
+        return shortLicenses.map { it.short }.filterNot { it == "custom" }
     }
 
     fun getModInfo(id: String): ModrinthMod {

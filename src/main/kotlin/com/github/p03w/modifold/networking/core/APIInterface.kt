@@ -17,6 +17,13 @@ abstract class APIInterface(delay: Duration) {
 
     open fun HttpRequestBuilder.attachAuth() {}
 
+    inline fun <reified T: Any> getWithoutAuth(url: String): T {
+        return runBlocking {
+            waitUntilCanSend()
+            return@runBlocking client.get(url)
+        }
+    }
+
     inline fun <reified T: Any> get(url: String): T {
         return runBlocking {
             waitUntilCanSend()

@@ -10,7 +10,7 @@ class ModifoldArgs(parser: ArgParser) {
     //
 
     val debug by parser.flagging(
-        "-d", "--debug", "-v", "--verbose",
+        "-v", "--verbose",
         help = "Enable debug/verbose mode"
     )
 
@@ -30,6 +30,16 @@ class ModifoldArgs(parser: ArgParser) {
                 "Curseforge doesn't document their rate-limits so this is my solution. " +
                 "Defaults to 2000ms (2 seconds)"
     ) { toInt() }.default(2000)
+
+    val defaultLicense by parser.storing(
+        "-l", "--license",
+        help = "The default license for newly created projects, i.e mpl, lgpl-3, apache, cc0. Defaults to ARR"
+    ).default("arr")
+
+    val discordServer by parser.storing(
+        "-d", "--discord",
+        help = "The discord server link to add to each mod page"
+    ).default("")
 
     //
     // Required args
