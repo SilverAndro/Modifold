@@ -6,7 +6,7 @@ import java.io.InputStream
 import java.net.URL
 import kotlin.time.Duration.Companion.milliseconds
 
-object CurseforgeAPI: APIInterface(Global.args.curseforgeSpeed.milliseconds) {
+object CurseforgeAPI : APIInterface(Global.args.curseforgeSpeed.milliseconds) {
     fun getProjectData(id: Int): CurseforgeProject? {
         return try {
             get("https://curse.nikky.moe/api/addon/$id")
@@ -15,7 +15,7 @@ object CurseforgeAPI: APIInterface(Global.args.curseforgeSpeed.milliseconds) {
         }
     }
 
-    fun getProjectFiles(id: Int, onFailed: ()->Unit = {}): List<CurseforgeFile> {
+    fun getProjectFiles(id: Int, onFailed: () -> Unit = {}): List<CurseforgeFile> {
         return try {
             get("https://curse.nikky.moe/api/addon/$id/files")
         } catch (err: Exception) {

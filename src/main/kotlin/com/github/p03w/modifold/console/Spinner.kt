@@ -16,7 +16,7 @@ class Spinner(private val message: String) {
     init {
         job = Global.scope.launch {
             try {
-                while(true) {
+                while (true) {
                     spin()
                     delay(7)
                 }

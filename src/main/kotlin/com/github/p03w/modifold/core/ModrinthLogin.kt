@@ -23,7 +23,10 @@ fun loginToModrinth(): String {
                 if (code != null) {
                     call.respondText("Thanks! You can close this tab and go back to modifold now")
                 } else {
-                    call.respondText(status = HttpStatusCode(400, "No code parameter in URL"), text = "No code parameter in URL")
+                    call.respondText(
+                        status = HttpStatusCode(400, "No code parameter in URL"),
+                        text = "No code parameter in URL"
+                    )
                 }
             }
         }

@@ -14,22 +14,26 @@ fun matchExistingProjects(modrinthUser: ModrinthUser, curseforgeProjects: Mutabl
         if (modrinthProjects.isNotEmpty()) {
             val finder = SimilarProjectFinder(modrinthProjects, curseforgeProjects)
 
-            log("\n${"---".highlight()}\n" +
-                    "You will now be given the closest match on modrinth for each curseforge project.\n" +
-                    "If its a match, enter y\n" +
-                    "If not, enter n\n" +
-                    "To stop considering this modrinth project as a possibility for matches, enter i\n" +
-                    "${"---".highlight()}\n")
+            log(
+                "\n${"---".highlight()}\n" +
+                        "You will now be given the closest match on modrinth for each curseforge project.\n" +
+                        "If its a match, enter y\n" +
+                        "If not, enter n\n" +
+                        "To stop considering this modrinth project as a possibility for matches, enter i\n" +
+                        "${"---".highlight()}\n"
+            )
 
             val existing = mutableListOf<CurseforgeProject>()
             curseforgeProjects.forEach {
                 val similar = finder.findSimilar(it)
                 if (similar != null) {
-                    log("Possible existing modrinth project found for curseforge project ${it.name} (${it.slug}):")
-                    log("${similar.title} (${similar.id}): ${similar.description}")
+                    log("Possible existing modrinth project found for curseforge project ${it.display}):")
+                    log("${similar.display}: ${similar.description}")
                     log("Is this a match? (${"[y]".highlight()}es/${"[n]".highlight()}o/${"[i]".highlight()}gnore)")
                     when (requireInputOf("y", "n", "i")) {
-                        "y" -> {existing.add(it); finder.ignoredIDs.add(similar.id)}
+                        "y" -> {
+                            existing.add(it); finder.ignoredIDs.add(similar.id)
+                        }
                         "no" -> {}
                         "i" -> finder.ignoredIDs.add(similar.id)
                     }

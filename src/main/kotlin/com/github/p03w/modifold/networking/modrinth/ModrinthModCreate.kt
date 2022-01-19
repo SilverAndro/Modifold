@@ -24,7 +24,7 @@ data class ModrinthModCreate private constructor(
     val donation_urls: List<Any> = emptyList()
 ) {
     companion object {
-        fun of(curseforgeProject: CurseforgeProject, user: ModrinthUser): ModrinthModCreate {
+        fun of(curseforgeProject: CurseforgeProject): ModrinthModCreate {
             return ModrinthModCreate(
                 mod_name = curseforgeProject.name,
                 mod_slug = curseforgeProject.slug,

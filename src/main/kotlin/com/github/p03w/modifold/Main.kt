@@ -1,11 +1,7 @@
 package com.github.p03w.modifold
 
-import com.github.p03w.modifold.core.collectCurseforgeProjects
-import com.github.p03w.modifold.core.createModrinthProjects
-import com.github.p03w.modifold.core.matchExistingProjects
-import com.github.p03w.modifold.core.transferProjectFiles
+import com.github.p03w.modifold.core.*
 import com.github.p03w.modifold.networking.modrinth.ModrinthAPI
-import com.github.p03w.modifold.core.loginToModrinth
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.DefaultHelpFormatter
 import com.xenomachina.argparser.mainBody
@@ -18,18 +14,7 @@ fun main(args: Array<String>) {
             .parseInto(::ModifoldArgs)
     }
 
-    debug("Getting supported modrinth licenses")
-    val possibleLicenses = ModrinthAPI.getPossibleLicenses()
-    if (!possibleLicenses.contains(Global.args.defaultLicense)) {
-        error(buildString {
-            appendLine("Unsupported default license \"${Global.args.defaultLicense}\"")
-            appendLine("If you want to use a license not on the following list, you must set it yourself per project")
-            appendLine("Available licenses:")
-            possibleLicenses.forEach {
-                appendLine("- $it")
-            }
-        })
-    }
+    verifyDefaultLicense()
 
     AnsiConsole.systemInstall()
 

@@ -9,4 +9,6 @@ data class CurseforgeProject(
     val categories: List<CurseforgeCategory>,
     val categorySection: CurseforgeCategorySection,
     val attachments: List<CurseforgeAttachment>
-)
+) {
+    val display: String = "$name ($id)"
+}

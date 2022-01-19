@@ -1,6 +1,7 @@
 package com.github.p03w.modifold.networking.modrinth
 
 import com.github.p03w.modifold.networking.core.APIInterface
+import com.github.p03w.modifold.networking.curseforge.CurseforgeAPI
 import com.github.p03w.modifold.networking.curseforge.CurseforgeFile
 import com.github.p03w.modifold.networking.curseforge.CurseforgeProject
 import com.google.gson.GsonBuilder
@@ -65,14 +66,19 @@ object ModrinthAPI : APIInterface(380.milliseconds) {
             )
             append("data", GsonBuilder().serializeNulls().create().toJson(upload))
 
-            appendInput("${file.fileName}-0", headersOf(HttpHeaders.ContentDisposition, "filename=${file.fileName}"), file.fileLength) {
+            appendInput(
+                "${file.fileName}-0",
+                headersOf(HttpHeaders.ContentDisposition, "filename=${file.fileName}"),
+                file.fileLength
+            ) {
                 buildPacket {
-                    writeFully(URL(file.downloadUrl).openStream().readAllBytes())
+                    writeFully(CurseforgeAPI.getFileStream(file).readAllBytes())
                 }
             }
         }
     }
 
-    private val SEMVER = Regex("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?")
+    private val SEMVER =
+        Regex("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?")
     private val MC_SEMVER = Regex("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:\\.(0|[1-9]\\d*))?")
 }

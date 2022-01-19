@@ -8,4 +8,6 @@ data class ModrinthMod(
     val description: String,
     val body: String,
     val versions: List<String>
-)
+) {
+    val display: String = "$title ($id)"
+}

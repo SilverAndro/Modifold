@@ -9,7 +9,7 @@ import kotlin.system.exitProcess
 
 operator fun Ansi.plus(other: String) = this.toString() + other
 
-inline fun <T> withSpinner(message: String, action: ()->T): T {
+inline fun <T> withSpinner(message: String, action: () -> T): T {
     val spinner = Spinner(message)
     val result = action()
     spinner.done()
