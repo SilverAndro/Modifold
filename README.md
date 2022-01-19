@@ -1,9 +1,9 @@
-#Modifold
+# Modifold
 
 Modifold is a Kotlin CLI utility that allows you to transfer mods from curseforge to modrinth.
 **This project is not affiliated with curseforge or modrinth**
 
-###Usage
+### Usage
 
 The first thing you need to know is how to get a curseforge project ID. On this sidebar "About Project" tab, you can find that ID.
 You will need the numerical ID of every curseforge project you want to transfer to modrinth.
