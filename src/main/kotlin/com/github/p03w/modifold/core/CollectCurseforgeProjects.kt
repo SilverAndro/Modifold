@@ -20,8 +20,8 @@ fun collectCurseforgeProjects(ids: List<Int>): MutableList<CurseforgeProject> {
 
         if (projectData.categorySection.name != "Mods") {
             warn("Skipping project id $id (${projectData.name}) because its category is \"${projectData.categorySection.name}\" not \"Mods\"")
-        } else if (projectData.authors.first().name != Global.args.curseforgeUsername) {
-            warn("Skipping project id $id (${projectData.name}) because its author is ${projectData.authors.first().name} not ${Global.args.curseforgeUsername}")
+        } else if (!projectData.authors.any { it.name.lowercase() == Global.args.curseforgeUsername.lowercase() }) {
+            warn("Skipping project id $id (${projectData.name}) because none of its authors are ${Global.args.curseforgeUsername}")
         } else {
             curseforgeProjects.add(projectData)
         }

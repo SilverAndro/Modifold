@@ -10,8 +10,8 @@ You will need the numerical ID of every curseforge project you want to transfer 
 
 ![An image showing where the curseforge project ID is located on the project page](images/curseforge_id.png "Curseforge ID location")
 
-You will also need your curseforge username, exactly as it appears on the dashboard, comment section, owners tab, ect.
-This is used to verify the ownership of each mod being moved to modrinth, and will be discarded if it does not match.
+You will also need your curseforge username, this is used to verify the ownership of each mod being moved to modrinth, and will be discarded if it does not match.
+(You must be listed in the authors section)
 
 There is a full `-h` menu, however the simplest invocation of modifold is simply `java -jar modifold.jar <Owner Name> <Curseforge Project IDs...>`.
 This will walk you through any necessary steps, with notices along the way, so please read carefully to avoid confusion.

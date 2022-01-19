@@ -41,10 +41,14 @@ fun main(args: Array<String>) {
 
     val curseforgeProjects = collectCurseforgeProjects(Global.args.curseforgeIDs)
 
+    if (curseforgeProjects.isEmpty()) {
+        error("No projects to transfer")
+    }
     matchExistingProjects(modrinthUser, curseforgeProjects)
     if (curseforgeProjects.isEmpty()) {
         error("No projects to transfer")
     }
+
     log("Done matching projects, beginning transfer")
 
     val projectMapping = createModrinthProjects(curseforgeProjects)
