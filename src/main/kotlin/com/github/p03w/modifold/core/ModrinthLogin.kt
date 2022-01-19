@@ -1,5 +1,6 @@
 package com.github.p03w.modifold.core
 
+import com.github.p03w.modifold.Global
 import com.github.p03w.modifold.await
 import com.github.p03w.modifold.debug
 import com.github.p03w.modifold.error
@@ -13,6 +14,13 @@ import java.awt.Desktop
 import java.net.URI
 
 fun loginToModrinth(): String {
+    if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE) && Global.args.modrinthToken == null) {
+        error("Your system does not support starting a web browser, but is missing an access token passed through the --token argument")
+    }
+    if (Global.args.modrinthToken != null) {
+        return Global.args.modrinthToken!!
+    }
+
     debug("Starting local webserver")
 
     var code: String? = null

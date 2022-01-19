@@ -14,6 +14,11 @@ class ModifoldArgs(parser: ArgParser) {
         help = "Enable debug/verbose mode"
     )
 
+    val modrinthToken by parser.storing(
+        "--token",
+        help = "Sets the modrinth access token manually, bypassing the web-auth flow"
+    ).default(null)
+
     val donts by parser.adding(
         "--dont",
         help = "Things to not do (can be repeated), " +
