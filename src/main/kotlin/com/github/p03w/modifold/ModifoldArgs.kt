@@ -1,7 +1,6 @@
 package com.github.p03w.modifold
 
 import com.xenomachina.argparser.ArgParser
-import com.xenomachina.argparser.SystemExitException
 import com.xenomachina.argparser.default
 import java.util.*
 
@@ -15,16 +14,15 @@ class ModifoldArgs(parser: ArgParser) {
         help = "Enable debug/verbose mode"
     )
 
-    val noVerifyEndUser by parser.flagging(
-        "--no_verify_end_user",
-        help = "Skip the startup verify/message that makes sure these are your mods and that you're absolutely sure those are the right params"
-    )
-
-    val noVerifyExisting by parser.flagging(
-        "--no_verify_existing",
-        help = "If the initial setup of checking for possibly matching projects should be skipped. " +
-                "Use this if you know theres nothing there that would match"
-    )
+    val donts by parser.adding(
+        "--dont",
+        help = "Things to not do (can be repeated), " +
+                "pass 0 to disable startup confirm, " +
+                "1 to disable checking existing modrinth mods, " +
+                "2 to change the mcreator->cursed mapping to mcreator->misc, " +
+                "3 to disable category mapping entirely",
+        argName = "DONT_INDEX"
+    ) { DONT.values()[toInt()] }
 
     val curseforgeSpeed by parser.storing(
         "-s", "--speed",
@@ -60,8 +58,14 @@ class ModifoldArgs(parser: ArgParser) {
 
     val curseforgeIDs by parser.positionalList(
         "CURSEFORGE_PROJECT_ID",
-        help = "Adds a curseforge project to transfer by numerical ID"
-    ) { toInt() }.addValidator {
-        if (value.isEmpty()) throw SystemExitException("Must specify at least one curseforge project ID", 1)
+        help = "Adds a curseforge project to transfer by numerical ID",
+        sizeRange = 1..Int.MAX_VALUE
+    ) { toInt() }
+
+    enum class DONT {
+        VERIFY_END_USER,
+        VERIFY_EXISTING,
+        CURSE_MCREATOR,
+        MAP_CATEGORIES
     }
 }

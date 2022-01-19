@@ -10,9 +10,9 @@ import java.time.Instant
 
 fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthMod>) {
     mapping.keys.forEach { project ->
-        val files = withSpinner("Collecting files for ${project.display})") {
+        val files = withSpinner("Collecting files for ${project.display()})") {
             CurseforgeAPI.getProjectFiles(project.id) {
-                error("Could not get curseforge files for project ${project.display}")
+                error("Could not get curseforge files for project ${project.display()}")
             }.sortedBy { Instant.parse(it.fileDate + "Z") }
         }
 

@@ -1,6 +1,7 @@
 package com.github.p03w.modifold.core
 
 import com.github.p03w.modifold.Global
+import com.github.p03w.modifold.ModifoldArgs.DONT
 import com.github.p03w.modifold.console.highlight
 import com.github.p03w.modifold.debug
 import com.github.p03w.modifold.log
@@ -9,7 +10,7 @@ import com.github.p03w.modifold.networking.modrinth.ModrinthUser
 import com.github.p03w.modifold.requireInputOf
 
 fun matchExistingProjects(modrinthUser: ModrinthUser, curseforgeProjects: MutableList<CurseforgeProject>) {
-    if (!Global.args.noVerifyExisting) {
+    if (!Global.args.donts.contains(DONT.VERIFY_EXISTING)) {
         val modrinthProjects = collectModrinthProjects(modrinthUser)
         if (modrinthProjects.isNotEmpty()) {
             val finder = SimilarProjectFinder(modrinthProjects, curseforgeProjects)
@@ -27,8 +28,8 @@ fun matchExistingProjects(modrinthUser: ModrinthUser, curseforgeProjects: Mutabl
             curseforgeProjects.forEach {
                 val similar = finder.findSimilar(it)
                 if (similar != null) {
-                    log("Possible existing modrinth project found for curseforge project ${it.display}):")
-                    log("${similar.display}: ${similar.description}")
+                    log("Possible existing modrinth project found for curseforge project ${it.display()}):")
+                    log("${similar.display()}: ${similar.description}")
                     log("Is this a match? (${"[y]".highlight()}es/${"[n]".highlight()}o/${"[i]".highlight()}gnore)")
                     when (requireInputOf("y", "n", "i")) {
                         "y" -> {

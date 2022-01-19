@@ -7,7 +7,8 @@ data class ModrinthMod(
     val license: ModrinthLicense,
     val description: String,
     val body: String,
-    val versions: List<String>
+    val versions: List<String>,
+    val categories: List<String>
 ) {
-    val display: String = "$title ($id)"
+    fun display() = "$title ($id)"
 }

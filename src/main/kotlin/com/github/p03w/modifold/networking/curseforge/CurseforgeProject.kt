@@ -10,5 +10,5 @@ data class CurseforgeProject(
     val categorySection: CurseforgeCategorySection,
     val attachments: List<CurseforgeAttachment>
 ) {
-    val display: String = "$name ($id)"
+    fun display() = "$name ($id)"
 }

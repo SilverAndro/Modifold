@@ -1,5 +1,6 @@
 package com.github.p03w.modifold
 
+import com.github.p03w.modifold.ModifoldArgs.DONT
 import com.github.p03w.modifold.core.*
 import com.github.p03w.modifold.networking.modrinth.ModrinthAPI
 import com.xenomachina.argparser.ArgParser
@@ -14,11 +15,12 @@ fun main(args: Array<String>) {
             .parseInto(::ModifoldArgs)
     }
 
+    if (!Global.args.donts.contains(DONT.MAP_CATEGORIES)) checkForUnknownCategories()
     verifyDefaultArgs()
 
     AnsiConsole.systemInstall()
 
-    if (!Global.args.noVerifyEndUser) {
+    if (!Global.args.donts.contains(DONT.VERIFY_END_USER)) {
         println("ONLY USE THIS TOOL ON PROJECTS YOU OWN, PLEASE")
         println("I built this for honest users who want to move off curseforge, I don't want to have to deal with people blaming me because someone stole their mods.")
         println("That would probably hurt modrinth's reputation as well.")
@@ -49,6 +51,8 @@ fun main(args: Array<String>) {
 
     log("Beginning file transfer")
     transferProjectFiles(projectMapping)
+
+    log("Done! Don't forget to fix up the created mods and submit for approval!")
 
     AnsiConsole.systemUninstall()
 }

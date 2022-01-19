@@ -65,12 +65,19 @@ object ModrinthAPI : APIInterface(380.milliseconds) {
     fun makeModVersion(mod: ModrinthMod, file: CurseforgeFile, project: CurseforgeProject) {
         postForm<HttpResponse>("https://api.modrinth.com/api/v1/version") {
             val upload = ModrinthVersionUpload(
-                mod.id,
-                listOf("${file.fileName}-0"),
-                SEMVER.find(file.fileName.removeSuffix(".jar"))?.value ?: file.fileName.removeSuffix(".jar"),
-                file.displayName,
-                "Transferred automatically from https://www.curseforge.com/minecraft/mc-mods/${project.slug}/files/${file.id}",
-                file.gameVersion.filter { MC_SEMVER.matches(it) }
+                mod_id = mod.id,
+                file_parts = listOf("${file.fileName}-0"),
+                version_number = SEMVER.find(file.fileName.removeSuffix(".jar"))?.value
+                    ?: file.fileName.removeSuffix(".jar"),
+                version_title = file.displayName,
+                version_body = "Transferred automatically from https://www.curseforge.com/minecraft/mc-mods/${project.slug}/files/${file.id}",
+                game_versions = file.gameVersion.filter { MC_SEMVER.matches(it) },
+                release_channel = when (file.releaseType) {
+                    3 -> "alpha"
+                    2 -> "beta"
+                    1 -> "release"
+                    else -> throw IllegalArgumentException("Unknown release type ${file.releaseType} on file https://www.curseforge.com/minecraft/mc-mods/${project.slug}/files/${file.id}")
+                }
             )
             append("data", GsonBuilder().serializeNulls().create().toJson(upload))
 
