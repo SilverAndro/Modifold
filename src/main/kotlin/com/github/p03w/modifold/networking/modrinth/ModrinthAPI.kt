@@ -26,6 +26,14 @@ object ModrinthAPI : APIInterface(380.milliseconds) {
         return shortLicenses.map { it.short }.filterNot { it == "custom" }
     }
 
+    fun getPossibleLoaders(): List<String> {
+        return getWithoutAuth("https://api.modrinth.com/api/v1/tag/loader")
+    }
+
+    fun getPossibleCategories(): List<String> {
+        return getWithoutAuth("https://api.modrinth.com/api/v1/tag/category")
+    }
+
     fun getModInfo(id: String): ModrinthMod {
         return get("https://api.modrinth.com/api/v1/mod/$id")
     }

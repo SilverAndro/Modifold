@@ -3,6 +3,7 @@ package com.github.p03w.modifold
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.SystemExitException
 import com.xenomachina.argparser.default
+import java.util.*
 
 class ModifoldArgs(parser: ArgParser) {
     //
@@ -35,18 +36,18 @@ class ModifoldArgs(parser: ArgParser) {
     val defaultLicense by parser.storing(
         "-l", "--license",
         help = "The default license for newly created projects, i.e mpl, lgpl-3, apache, cc0. Defaults to ARR"
-    ).default("arr")
+    ) { lowercase(Locale.getDefault()) }.default("arr")
 
     val discordServer by parser.storing(
         "-d", "--discord",
         help = "The discord server link to add to each mod page"
     ).default("")
 
-    val loaders by parser.adding(
+    val defaultLoaders by parser.adding(
         "-L", "--loader",
         help = "What loader to add to mods by default, can be repeated",
         argName = "DEFAULT_LOADER"
-    )
+    ) { lowercase(Locale.getDefault()) }
 
     //
     // Required args

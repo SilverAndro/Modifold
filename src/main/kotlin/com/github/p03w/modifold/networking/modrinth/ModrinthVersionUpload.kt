@@ -10,7 +10,7 @@ data class ModrinthVersionUpload(
     val version_body: String,
     val game_versions: List<String>,
     val release_channel: String = "release",
-    val loaders: List<String> = Global.args.loaders,
+    val loaders: List<String> = Global.args.defaultLoaders,
     val featured: Boolean = false,
     val dependencies: List<String> = emptyList()
 )

@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
             .parseInto(::ModifoldArgs)
     }
 
-    verifyDefaultLicense()
+    verifyDefaultArgs()
 
     AnsiConsole.systemInstall()
 
