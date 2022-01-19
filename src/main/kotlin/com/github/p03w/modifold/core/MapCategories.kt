@@ -4,11 +4,12 @@ import com.github.p03w.modifold.Global
 import com.github.p03w.modifold.ModifoldArgs.DONT
 import com.github.p03w.modifold.debug
 import com.github.p03w.modifold.networking.curseforge.CurseforgeCategory
+import com.github.p03w.modifold.networking.curseforge.CurseforgeFile
 import com.github.p03w.modifold.networking.modrinth.ModrinthAPI
 import com.github.p03w.modifold.warn
 
 fun mapCategories(curseforgeCategories: List<CurseforgeCategory>): List<String> {
-    val out = mutableListOf<String>()
+    val out = mutableSetOf<String>()
 
     val mapping = mapOf(
         "World Gen" to "worldgen",
@@ -49,7 +50,11 @@ fun mapCategories(curseforgeCategories: List<CurseforgeCategory>): List<String> 
         }
     }
 
-    return out
+    return out.toList()
+}
+
+fun getLoaders(file: CurseforgeFile): List<String> {
+    return file.gameVersion.filterNot { ModrinthAPI.MC_SEMVER.matches(it) || it.lowercase().contains("java") }.map { it.lowercase() }
 }
 
 fun checkForUnknownCategories() {

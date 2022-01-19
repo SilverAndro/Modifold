@@ -11,10 +11,10 @@ fun createModrinthProjects(curseforgeProjects: List<CurseforgeProject>): Mutable
     log("Creating modrinth projects from curseforge projects")
     val out = mutableMapOf<CurseforgeProject, ModrinthMod>()
 
-    curseforgeProjects.forEach {
-        withSpinner("Making modrinth project for ${it.display()}") {
-            val mod = ModrinthAPI.makeMod(ModrinthModCreate.of(it), it)
-            out[it] = mod
+    curseforgeProjects.forEach { project ->
+        withSpinner("Making modrinth project for ${project.display()}") {
+            val mod = ModrinthAPI.makeMod(ModrinthModCreate.of(project), project)
+            out[project] = mod
         }
     }
 

@@ -1,5 +1,6 @@
 package com.github.p03w.modifold.networking.modrinth
 
+import com.github.p03w.modifold.core.getLoaders
 import com.github.p03w.modifold.networking.core.APIInterface
 import com.github.p03w.modifold.networking.curseforge.CurseforgeAPI
 import com.github.p03w.modifold.networking.curseforge.CurseforgeFile
@@ -77,7 +78,8 @@ object ModrinthAPI : APIInterface(380.milliseconds) {
                     2 -> "beta"
                     1 -> "release"
                     else -> throw IllegalArgumentException("Unknown release type ${file.releaseType} on file https://www.curseforge.com/minecraft/mc-mods/${project.slug}/files/${file.id}")
-                }
+                },
+                loaders = getLoaders(file)
             )
             append("data", GsonBuilder().serializeNulls().create().toJson(upload))
 
@@ -95,5 +97,5 @@ object ModrinthAPI : APIInterface(380.milliseconds) {
 
     private val SEMVER =
         Regex("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?")
-    private val MC_SEMVER = Regex("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:\\.(0|[1-9]\\d*))?")
+    val MC_SEMVER = Regex("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:\\.(0|[1-9]\\d*))?")
 }
