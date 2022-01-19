@@ -18,6 +18,7 @@ fun loginToModrinth(): String {
         error("Your system does not support starting a web browser, but is missing an access token passed through the --token argument")
     }
     if (Global.args.modrinthToken != null) {
+        debug("Token was passed manually, using that")
         return Global.args.modrinthToken!!
     }
 
