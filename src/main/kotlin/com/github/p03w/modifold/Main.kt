@@ -21,9 +21,9 @@ fun main(args: Array<String>) {
     AnsiConsole.systemInstall()
 
     if (!Global.args.donts.contains(DONT.VERIFY_END_USER)) {
-        println("ONLY USE THIS TOOL ON PROJECTS YOU OWN, PLEASE")
+        println("ONLY USE THIS TOOL ON PROJECTS YOU OWN")
         println("I built this for honest users who want to move off curseforge, I don't want to have to deal with people blaming me because someone stole their mods.")
-        println("That would probably hurt modrinth's reputation as well.")
+        println("Modrinth moderation also checks for ownership anyways, so you're unlikely to get anywhere")
         println("Type \"yes\" if you understand this should only be used on your own projects to continue execution")
         if (readln() != "yes") {
             println("Quiting")
