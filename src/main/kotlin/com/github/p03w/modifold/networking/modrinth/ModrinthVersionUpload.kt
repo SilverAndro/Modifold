@@ -1,5 +1,7 @@
 package com.github.p03w.modifold.networking.modrinth
 
+import com.github.p03w.modifold.Global
+
 data class ModrinthVersionUpload(
     val mod_id: String,
     val file_parts: List<String>,
@@ -8,7 +10,7 @@ data class ModrinthVersionUpload(
     val version_body: String,
     val game_versions: List<String>,
     val release_channel: String = "release",
-    val loaders: List<String> = listOf("fabric"),
+    val loaders: List<String> = Global.args.loaders,
     val featured: Boolean = false,
     val dependencies: List<String> = emptyList()
 )

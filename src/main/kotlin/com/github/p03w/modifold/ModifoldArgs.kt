@@ -22,7 +22,7 @@ class ModifoldArgs(parser: ArgParser) {
     val noVerifyExisting by parser.flagging(
         "--no_verify_existing",
         help = "If the initial setup of checking for possibly matching projects should be skipped. " +
-                "Use this if you're new to modrinth and know theres nothing there that would match"
+                "Use this if you know theres nothing there that would match"
     )
 
     val curseforgeSpeed by parser.storing(
@@ -41,6 +41,12 @@ class ModifoldArgs(parser: ArgParser) {
         "-d", "--discord",
         help = "The discord server link to add to each mod page"
     ).default("")
+
+    val loaders by parser.adding(
+        "-L", "--loader",
+        help = "What loader to add to mods by default, can be repeated",
+        argName = "DEFAULT_LOADER"
+    )
 
     //
     // Required args
