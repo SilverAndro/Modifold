@@ -17,7 +17,7 @@ There is a full `-h` menu, however the simplest invocation of modifold is simply
 This will walk you through any necessary steps, with notices along the way, so please read carefully to avoid confusion.
 The tool will only move entire projects, *not* individual files.
 
-Some other common flags would be `-l LICENSE` to set the default license, `-L LOADER` to set the default loader(s), and `-d DISCORD` to set the discord link.
+Some other common flags would be `-l LICENSE` to set the default license and `-d DISCORD` to set the discord link.
 License field will be verified by the modrinth team so make sure you update it, its "arr" by default.
 
 **Remember to update the projects once created!** Modifold creates the mods as drafts so that you can add sources, issues, delete if needed, ect.
