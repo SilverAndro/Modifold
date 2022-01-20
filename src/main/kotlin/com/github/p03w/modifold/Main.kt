@@ -4,6 +4,7 @@ import com.github.p03w.modifold.ModifoldArgs.DONT
 import com.github.p03w.modifold.core.*
 import com.github.p03w.modifold.networking.modrinth.ModrinthAPI
 import com.github.p03w.modifold.util.debug
+import com.github.p03w.modifold.util.error
 import com.github.p03w.modifold.util.log
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.DefaultHelpFormatter
@@ -44,11 +45,11 @@ fun main(args: Array<String>) {
     val curseforgeProjects = collectCurseforgeProjects(Global.args.curseforgeIDs)
 
     if (curseforgeProjects.isEmpty()) {
-        com.github.p03w.modifold.util.error("No projects to transfer")
+        error("No projects to transfer")
     }
     matchExistingProjects(modrinthUser, curseforgeProjects)
     if (curseforgeProjects.isEmpty()) {
-        com.github.p03w.modifold.util.error("No projects to transfer")
+        error("No projects to transfer")
     }
 
     log("Done matching projects, beginning transfer")
