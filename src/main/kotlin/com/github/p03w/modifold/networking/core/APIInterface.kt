@@ -9,7 +9,7 @@ import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration
 
 abstract class APIInterface(delay: Duration) {
-    val canSend by Countdown(delay)
+    private val canSend by Countdown(delay)
     val client = HttpClient(CIO) {
         install(JsonFeature)
     }

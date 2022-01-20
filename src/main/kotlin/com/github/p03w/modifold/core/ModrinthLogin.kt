@@ -60,5 +60,4 @@ fun loginToModrinth(): String {
     } else {
         return code!!
     }
-    throw IllegalStateException("Invalid logic flow, modrinth login should throw error or return, not reach here.")
 }

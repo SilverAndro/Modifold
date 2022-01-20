@@ -40,4 +40,4 @@ the future, but we'll cross that bridge if we come to it.
 
 Q: Modrinth v2 api? / Mod-pack support?
 
-A: When on stable modrinth, this tool will get a rewrite to support those. Support will not be instantaneous obviously.
+A: When on stable modrinth, this tool will get a rewrite to support those. Support will not be instantaneous, obviously.

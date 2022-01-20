@@ -19,6 +19,7 @@ class ModifoldArgs(parser: ArgParser) {
         help = "Sets the modrinth access token manually, bypassing the web-auth flow"
     ).default(null)
 
+    @Suppress("SpellCheckingInspection")
     val donts by parser.adding(
         "--dont",
         help = "Things to not do (can be repeated), " +

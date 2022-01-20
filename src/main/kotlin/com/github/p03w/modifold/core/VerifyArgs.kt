@@ -1,9 +1,9 @@
 package com.github.p03w.modifold.core
 
 import com.github.p03w.modifold.Global
+import com.github.p03w.modifold.networking.modrinth.ModrinthAPI
 import com.github.p03w.modifold.util.debug
 import com.github.p03w.modifold.util.error
-import com.github.p03w.modifold.networking.modrinth.ModrinthAPI
 
 fun verifyDefaultArgs() {
     debug("Getting supported modrinth licenses")
@@ -21,10 +21,10 @@ fun verifyDefaultArgs() {
 
     debug("Getting supported modrinth loaders")
     val possibleLoaders = ModrinthAPI.getPossibleLoaders()
-    Global.args.defaultLoaders.forEach {
-        if (!possibleLoaders.contains(it)) {
+    Global.args.defaultLoaders.forEach { loader ->
+        if (!possibleLoaders.contains(loader)) {
             error(buildString {
-                appendLine("Unsupported default loader \"$it\"")
+                appendLine("Unsupported default loader \"$loader\"")
                 appendLine("Available loaders:")
                 possibleLoaders.forEach {
                     appendLine("- $it")

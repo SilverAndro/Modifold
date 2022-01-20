@@ -5,10 +5,6 @@ import com.github.p03w.modifold.console.Spinner
 import com.github.p03w.modifold.console.debug
 import com.github.p03w.modifold.console.error
 import com.github.p03w.modifold.console.warn
-import org.fusesource.jansi.Ansi
-import kotlin.system.exitProcess
-
-operator fun Ansi.plus(other: String) = this.toString() + other
 
 inline fun <T> withSpinner(message: String, action: () -> T): T {
     val spinner = Spinner(message)
@@ -25,7 +21,7 @@ inline fun <T> withSpinner(message: String, action: () -> T): T {
 
 fun debug(text: String) {
     if (Global.args.debug) {
-        println("DEBUG: ".debug() + text)
+        println("DEBUG: ".debug().a(text))
     }
 }
 
@@ -42,9 +38,8 @@ fun warn(text: String) {
     println("WARN: $text".warn())
 }
 
-fun error(text: String) {
-    println("ERROR: $text".error())
-    exitProcess(1)
+fun error(text: String): Nothing {
+    throw IllegalStateException("ERROR: $text".error().toString())
 }
 
 fun requireInputOf(vararg possible: String): String {

@@ -2,10 +2,10 @@ package com.github.p03w.modifold.core
 
 import com.github.p03w.modifold.Global
 import com.github.p03w.modifold.ModifoldArgs.DONT
-import com.github.p03w.modifold.util.debug
 import com.github.p03w.modifold.networking.curseforge.CurseforgeCategory
 import com.github.p03w.modifold.networking.curseforge.CurseforgeFile
 import com.github.p03w.modifold.networking.modrinth.ModrinthAPI
+import com.github.p03w.modifold.util.debug
 import com.github.p03w.modifold.util.warn
 
 fun mapCategories(curseforgeCategories: List<CurseforgeCategory>): List<String> {
@@ -54,7 +54,8 @@ fun mapCategories(curseforgeCategories: List<CurseforgeCategory>): List<String> 
 }
 
 fun getLoaders(file: CurseforgeFile): List<String> {
-    return file.gameVersion.filterNot { ModrinthAPI.MC_SEMVER.matches(it) || it.lowercase().contains("java") }.map { it.lowercase() }
+    return file.gameVersion.filterNot { ModrinthAPI.MC_SEMVER.matches(it) || it.lowercase().contains("java") }
+        .map { it.lowercase() }
 }
 
 fun checkForUnknownCategories() {

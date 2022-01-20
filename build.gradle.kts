@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName", "SpellCheckingInspection")
+
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -7,7 +9,7 @@ plugins {
 }
 
 group = "com.github.p03w"
-version = "0.0.4"
+version = "0.0.5"
 
 repositories {
     mavenCentral()

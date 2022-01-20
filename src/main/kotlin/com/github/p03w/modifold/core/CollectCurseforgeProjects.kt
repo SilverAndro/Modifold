@@ -1,9 +1,9 @@
 package com.github.p03w.modifold.core
 
 import com.github.p03w.modifold.Global
-import com.github.p03w.modifold.util.log
 import com.github.p03w.modifold.networking.curseforge.CurseforgeAPI
 import com.github.p03w.modifold.networking.curseforge.CurseforgeProject
+import com.github.p03w.modifold.util.log
 import com.github.p03w.modifold.util.warn
 import com.github.p03w.modifold.util.withSpinner
 

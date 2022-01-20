@@ -6,7 +6,7 @@ import com.github.p03w.modifold.util.withSpinner
 import com.kennethlange.nlp.similarity.TextSimilarity
 import com.kennethlange.nlp.similarity.TokenizerImpl
 
-class SimilarProjectFinder(val modrinthProjects: List<ModrinthMod>, curseforgeProjects: List<CurseforgeProject>) {
+class SimilarProjectFinder(private val modrinthProjects: List<ModrinthMod>, curseforgeProjects: List<CurseforgeProject>) {
     private val ts = TextSimilarity(TokenizerImpl(IGNORED_WORDS))
 
     val ignoredIDs: MutableSet<String> = mutableSetOf()

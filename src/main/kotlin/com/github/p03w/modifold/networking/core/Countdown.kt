@@ -4,8 +4,8 @@ import java.time.Instant
 import kotlin.reflect.KProperty
 import kotlin.time.Duration
 
-class Countdown(val delay: Duration) {
-    var clock = -1L
+class Countdown(private val delay: Duration) {
+    private var clock = -1L
 
     operator fun getValue(thisRef: Any, kParameter: KProperty<*>): Boolean {
         if (Instant.now().toEpochMilli() >= clock) {
