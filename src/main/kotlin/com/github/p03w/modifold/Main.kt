@@ -3,6 +3,8 @@ package com.github.p03w.modifold
 import com.github.p03w.modifold.ModifoldArgs.DONT
 import com.github.p03w.modifold.core.*
 import com.github.p03w.modifold.networking.modrinth.ModrinthAPI
+import com.github.p03w.modifold.util.debug
+import com.github.p03w.modifold.util.log
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.DefaultHelpFormatter
 import com.xenomachina.argparser.mainBody
@@ -10,6 +12,8 @@ import org.fusesource.jansi.AnsiConsole
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
+    AnsiConsole.systemInstall()
+
     Global.args = mainBody {
         ArgParser(args, helpFormatter = DefaultHelpFormatter(prologue = Global.helpMenuPrologue))
             .parseInto(::ModifoldArgs)
@@ -17,8 +21,6 @@ fun main(args: Array<String>) {
 
     if (!Global.args.donts.contains(DONT.MAP_CATEGORIES)) checkForUnknownCategories()
     verifyDefaultArgs()
-
-    AnsiConsole.systemInstall()
 
     if (!Global.args.donts.contains(DONT.VERIFY_END_USER)) {
         println("ONLY USE THIS TOOL ON PROJECTS YOU OWN")
@@ -42,11 +44,11 @@ fun main(args: Array<String>) {
     val curseforgeProjects = collectCurseforgeProjects(Global.args.curseforgeIDs)
 
     if (curseforgeProjects.isEmpty()) {
-        error("No projects to transfer")
+        com.github.p03w.modifold.util.error("No projects to transfer")
     }
     matchExistingProjects(modrinthUser, curseforgeProjects)
     if (curseforgeProjects.isEmpty()) {
-        error("No projects to transfer")
+        com.github.p03w.modifold.util.error("No projects to transfer")
     }
 
     log("Done matching projects, beginning transfer")

@@ -2,7 +2,7 @@ package com.github.p03w.modifold.core
 
 import com.github.p03w.modifold.networking.curseforge.CurseforgeProject
 import com.github.p03w.modifold.networking.modrinth.ModrinthMod
-import com.github.p03w.modifold.withSpinner
+import com.github.p03w.modifold.util.withSpinner
 import com.kennethlange.nlp.similarity.TextSimilarity
 import com.kennethlange.nlp.similarity.TokenizerImpl
 

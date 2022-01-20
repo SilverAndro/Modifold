@@ -2,6 +2,7 @@ package com.github.p03w.modifold.console
 
 import com.github.p03w.modifold.Global
 import com.github.p03w.modifold.networking.core.Countdown
+import com.github.p03w.modifold.util.BadCancellationException
 import kotlinx.coroutines.*
 import java.time.Instant
 import kotlin.time.Duration.Companion.milliseconds
@@ -20,8 +21,10 @@ class Spinner(private val message: String) {
                     spin()
                     delay(7)
                 }
-            } finally {
-                finish()
+            } catch (cancel: CancellationException) {
+                if (cancel !is BadCancellationException) {
+                    finish()
+                }
             }
         }
     }
@@ -32,12 +35,23 @@ class Spinner(private val message: String) {
         }
     }
 
+    fun fail() {
+        runBlocking {
+            job.cancel(BadCancellationException())
+            job.join()
+        }
+        val now = Instant.now()
+        val change = now.toEpochMilli() - startInstant.toEpochMilli()
+        println("\r$message [${"FAIL".error()}] (${change}ms)")
+    }
+
     private fun spin() {
         tickSpinner()
         val now = Instant.now()
         val change = now.toEpochMilli() - startInstant.toEpochMilli()
         print("\r$message [${spinner.highlight()}] (${change}ms)")
     }
+
 
     private fun finish() {
         val now = Instant.now()
@@ -56,4 +70,5 @@ class Spinner(private val message: String) {
             }
         }
     }
+
 }

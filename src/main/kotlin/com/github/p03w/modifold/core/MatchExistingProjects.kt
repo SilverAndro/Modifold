@@ -3,11 +3,11 @@ package com.github.p03w.modifold.core
 import com.github.p03w.modifold.Global
 import com.github.p03w.modifold.ModifoldArgs.DONT
 import com.github.p03w.modifold.console.highlight
-import com.github.p03w.modifold.debug
-import com.github.p03w.modifold.log
+import com.github.p03w.modifold.util.debug
+import com.github.p03w.modifold.util.log
 import com.github.p03w.modifold.networking.curseforge.CurseforgeProject
 import com.github.p03w.modifold.networking.modrinth.ModrinthUser
-import com.github.p03w.modifold.requireInputOf
+import com.github.p03w.modifold.util.requireInputOf
 
 fun matchExistingProjects(modrinthUser: ModrinthUser, curseforgeProjects: MutableList<CurseforgeProject>) {
     if (!Global.args.donts.contains(DONT.VERIFY_EXISTING)) {

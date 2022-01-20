@@ -1,5 +1,6 @@
-package com.github.p03w.modifold
+package com.github.p03w.modifold.util
 
+import com.github.p03w.modifold.Global
 import com.github.p03w.modifold.console.Spinner
 import com.github.p03w.modifold.console.debug
 import com.github.p03w.modifold.console.error
@@ -9,9 +10,15 @@ import kotlin.system.exitProcess
 
 operator fun Ansi.plus(other: String) = this.toString() + other
 
-inline fun <T> withSpinner(message: String, action: (Spinner) -> T): T {
+inline fun <T> withSpinner(message: String, action: () -> T): T {
     val spinner = Spinner(message)
-    val result = action(spinner)
+    val result: T
+    try {
+        result = action()
+    } catch (err: Exception) {
+        spinner.fail()
+        throw err
+    }
     spinner.done()
     return result
 }

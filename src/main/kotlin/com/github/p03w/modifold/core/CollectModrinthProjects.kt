@@ -1,10 +1,10 @@
 package com.github.p03w.modifold.core
 
-import com.github.p03w.modifold.log
+import com.github.p03w.modifold.util.log
 import com.github.p03w.modifold.networking.modrinth.ModrinthAPI
 import com.github.p03w.modifold.networking.modrinth.ModrinthMod
 import com.github.p03w.modifold.networking.modrinth.ModrinthUser
-import com.github.p03w.modifold.withSpinner
+import com.github.p03w.modifold.util.withSpinner
 
 fun collectModrinthProjects(modrinthUser: ModrinthUser): MutableList<ModrinthMod> {
     log("Collecting existing modrinth projects")

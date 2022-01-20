@@ -1,11 +1,11 @@
 package com.github.p03w.modifold.core
 
 import com.github.p03w.modifold.Global
-import com.github.p03w.modifold.log
+import com.github.p03w.modifold.util.log
 import com.github.p03w.modifold.networking.curseforge.CurseforgeAPI
 import com.github.p03w.modifold.networking.curseforge.CurseforgeProject
-import com.github.p03w.modifold.warn
-import com.github.p03w.modifold.withSpinner
+import com.github.p03w.modifold.util.warn
+import com.github.p03w.modifold.util.withSpinner
 
 fun collectCurseforgeProjects(ids: List<Int>): MutableList<CurseforgeProject> {
     log("Collecting curseforge projects")

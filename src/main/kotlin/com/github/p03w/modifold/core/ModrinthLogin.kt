@@ -1,9 +1,9 @@
 package com.github.p03w.modifold.core
 
 import com.github.p03w.modifold.Global
-import com.github.p03w.modifold.await
-import com.github.p03w.modifold.debug
-import com.github.p03w.modifold.error
+import com.github.p03w.modifold.util.await
+import com.github.p03w.modifold.util.debug
+import com.github.p03w.modifold.util.error
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*

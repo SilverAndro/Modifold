@@ -2,11 +2,11 @@ package com.github.p03w.modifold.core
 
 import com.github.p03w.modifold.Global
 import com.github.p03w.modifold.ModifoldArgs.DONT
-import com.github.p03w.modifold.debug
+import com.github.p03w.modifold.util.debug
 import com.github.p03w.modifold.networking.curseforge.CurseforgeCategory
 import com.github.p03w.modifold.networking.curseforge.CurseforgeFile
 import com.github.p03w.modifold.networking.modrinth.ModrinthAPI
-import com.github.p03w.modifold.warn
+import com.github.p03w.modifold.util.warn
 
 fun mapCategories(curseforgeCategories: List<CurseforgeCategory>): List<String> {
     val out = mutableSetOf<String>()
