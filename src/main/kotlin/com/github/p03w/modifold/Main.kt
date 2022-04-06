@@ -51,14 +51,15 @@ fun main(args: Array<String>) {
     if (curseforgeProjects.isEmpty()) {
         error("No projects to transfer")
     }
-    exitProcess(0)
 
-    log("Done matching projects, beginning transfer")
+    log("Done matching projects")
+
+    val toSave = getInfoToSaveLocally()
 
     val projectMapping = createModrinthProjects(curseforgeProjects)
 
     log("Beginning file transfer")
-    transferProjectFiles(projectMapping)
+    transferProjectFiles(projectMapping, toSave)
 
     log("Done! Don't forget to fix up the created mods and submit for approval!")
 

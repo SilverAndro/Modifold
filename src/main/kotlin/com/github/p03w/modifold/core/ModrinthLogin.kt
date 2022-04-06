@@ -1,6 +1,7 @@
 package com.github.p03w.modifold.core
 
 import com.github.kinquirer.KInquirer
+import com.github.kinquirer.components.ListViewOptions
 import com.github.kinquirer.components.promptInputPassword
 import com.github.kinquirer.components.promptList
 import com.github.p03w.modifold.cli.*
@@ -23,7 +24,8 @@ fun loginToModrinth(): String {
 
     val option = KInquirer.promptList(
         "How do you want to login to modrinth?",
-        listOf("Web Flow", "Manual Token Entry", "CLI Arg")
+        listOf("Web Flow", "Manual Token Entry", "CLI Arg"),
+        viewOptions = ListViewOptions(questionMarkPrefix = "")
     )
 
     return when (option) {

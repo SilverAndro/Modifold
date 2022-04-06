@@ -2,13 +2,13 @@ package com.github.p03w.modifold.modrinth_api
 
 import com.github.p03w.modifold.api_core.APIInterface
 import com.github.p03w.modifold.api_core.Ratelimit
-import com.github.p03w.modifold.curseforge_api.CurseforgeAPI
 import com.github.p03w.modifold.curseforge_schema.*
 import com.google.gson.GsonBuilder
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.utils.io.core.*
+import java.io.BufferedInputStream
 import java.net.URL
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -50,8 +50,8 @@ object ModrinthAPI : APIInterface() {
         return get<List<ModrinthProject>>("$root/user/${user.id}/projects").filter { it.project_type == "mod" }
     }
 
-    fun makeMod(create: ModrinthModCreate, project: CurseforgeProject): ModrinthProject {
-        return postForm("$root/mod") {
+    fun makeProject(create: ModrinthProjectCreate, project: CurseforgeProject): ModrinthProject {
+        return postForm("$root/project") {
             append("data", GsonBuilder().serializeNulls().create().toJson(create))
 
             appendInput("icon", headersOf(HttpHeaders.ContentDisposition, "filename=icon.png")) {
@@ -71,7 +71,7 @@ object ModrinthAPI : APIInterface() {
             .map { it.lowercase() }
     }
 
-    fun makeModVersion(mod: ModrinthProject, file: CurseforgeFile, project: CurseforgeProject) {
+    fun makeProjectVersion(mod: ModrinthProject, file: CurseforgeFile, stream: BufferedInputStream, project: CurseforgeProject) {
         postForm<HttpResponse>("$root/version") {
             val upload = ModrinthVersionUpload(
                 mod_id = mod.id,
@@ -97,7 +97,11 @@ object ModrinthAPI : APIInterface() {
                 file.fileLength
             ) {
                 buildPacket {
-                    writeFully(CurseforgeAPI.getFileStream(file).readAllBytes())
+                    var next = stream.read()
+                    while (next != -1) {
+                        writeByte(next.toByte())
+                        next = stream.read()
+                    }
                 }
             }
         }

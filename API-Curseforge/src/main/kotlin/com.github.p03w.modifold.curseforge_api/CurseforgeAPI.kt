@@ -11,9 +11,10 @@ import kotlin.time.Duration.Companion.milliseconds
 
 object CurseforgeAPI : APIInterface() {
     override val ratelimit = Ratelimit(ModifoldArgs.args.curseforgeSpeed.milliseconds, true)
+    const val root = "https://curse.nikky.moe/api"
     fun getProjectData(id: Int): CurseforgeProject? {
         return try {
-            get("https://curse.nikky.moe/api/addon/$id")
+            getWithoutAuth("$root/addon/$id")
         } catch (ignored: Exception) {
             null
         }
@@ -21,7 +22,7 @@ object CurseforgeAPI : APIInterface() {
 
     fun getProjectFiles(id: Int, onFailed: () -> Unit = {}): List<CurseforgeFile> {
         return try {
-            get("https://curse.nikky.moe/api/addon/$id/files")
+            getWithoutAuth("$root/addon/$id/files")
         } catch (err: Exception) {
             err.printStackTrace()
             onFailed()

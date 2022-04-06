@@ -60,7 +60,9 @@ class Spinner(private val message: String) {
         val now = Instant.now()
         val change = now.toEpochMilli() - startInstant.toEpochMilli()
 
-        println("\r$message [${"DONE".highlight()}] (${change}ms)")
+        synchronized(Companion) {
+            println("\r$message [${"DONE".highlight()}] (${change}ms)")
+        }
     }
 
     private fun tickSpinner() {
