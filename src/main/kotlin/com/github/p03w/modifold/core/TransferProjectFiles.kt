@@ -1,14 +1,14 @@
 package com.github.p03w.modifold.core
 
-import com.github.p03w.modifold.networking.curseforge.CurseforgeAPI
-import com.github.p03w.modifold.networking.curseforge.CurseforgeProject
-import com.github.p03w.modifold.networking.modrinth.ModrinthAPI
-import com.github.p03w.modifold.networking.modrinth.ModrinthMod
-import com.github.p03w.modifold.util.error
-import com.github.p03w.modifold.util.withSpinner
+import com.github.p03w.modifold.cli.error
+import com.github.p03w.modifold.cli.withSpinner
+import com.github.p03w.modifold.curseforge_api.CurseforgeAPI
+import com.github.p03w.modifold.curseforge_schema.CurseforgeProject
+import com.github.p03w.modifold.curseforge_schema.ModrinthProject
+import com.github.p03w.modifold.modrinth_api.ModrinthAPI
 import java.time.Instant
 
-fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthMod>) {
+fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthProject>) {
     mapping.keys.forEach { project ->
         val files = withSpinner("Collecting files for ${project.display()})") {
             CurseforgeAPI.getProjectFiles(project.id) {
@@ -19,7 +19,7 @@ fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthMod>) {
         files.forEach { file ->
             withSpinner("Transferring ${file.fileName}") {
                 ModrinthAPI.makeModVersion(
-                    ModrinthAPI.getModInfo(mapping[project]!!.id),
+                    ModrinthAPI.getProjectInfo(mapping[project]!!.id),
                     file,
                     project
                 )

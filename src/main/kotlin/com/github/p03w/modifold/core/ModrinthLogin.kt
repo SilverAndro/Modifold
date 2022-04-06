@@ -1,9 +1,10 @@
 package com.github.p03w.modifold.core
 
-import com.github.p03w.modifold.Global
-import com.github.p03w.modifold.util.await
-import com.github.p03w.modifold.util.debug
-import com.github.p03w.modifold.util.error
+import com.github.kinquirer.KInquirer
+import com.github.kinquirer.components.promptInputPassword
+import com.github.kinquirer.components.promptList
+import com.github.p03w.modifold.cli.*
+import com.github.p03w.modifold.modrinth_api.ModrinthAPI
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
@@ -12,14 +13,35 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import java.awt.Desktop
 import java.net.URI
+import kotlin.system.exitProcess
 
 fun loginToModrinth(): String {
-    if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE) && Global.args.modrinthToken == null) {
-        error("Your system does not support starting a web browser, but is missing an access token passed through the --token argument")
+    if (ModifoldArgs.args.modrinthToken != null) {
+        log("Token was passed through CLI, using that")
+        return ModifoldArgs.args.modrinthToken!!
     }
-    if (Global.args.modrinthToken != null) {
-        debug("Token was passed manually, using that")
-        return Global.args.modrinthToken!!
+
+    val option = KInquirer.promptList(
+        "How do you want to login to modrinth?",
+        listOf("Web Flow", "Manual Token Entry", "CLI Arg")
+    )
+
+    return when (option) {
+        "Web Flow" -> doWebFlow()
+        "Manual Token Entry" -> doManualEntry()
+        "CLI Arg" -> showCLIExplainer()
+        else -> throw IllegalStateException()
+    }
+}
+
+fun showCLIExplainer(): Nothing {
+    log("To pass the access token through CLI, pass --token <TOKEN>")
+    exitProcess(0)
+}
+
+fun doWebFlow(): String {
+    if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE) && ModifoldArgs.args.modrinthToken == null) {
+        error("Your system does not support starting a web browser! Cannot do web flow.")
     }
 
     debug("Starting local webserver")
@@ -41,15 +63,12 @@ fun loginToModrinth(): String {
         }
     }
 
-
     server.start()
 
-    await("Your web browser will open a webpage to login to modrinth, please complete the flow and come back here (enter to continue)")
-
     debug("Opening login flow")
-    Desktop.getDesktop().browse(URI.create("https://api.modrinth.com/api/v1/auth/init?url=http://127.0.0.1:2822"))
+    Desktop.getDesktop().browse(URI.create("${ModrinthAPI.root}/auth/init?url=http://127.0.0.1:2822"))
 
-    await("Press enter here when you return")
+    await("Press enter to continue")
 
     debug("Code is $code")
 
@@ -60,4 +79,8 @@ fun loginToModrinth(): String {
     } else {
         return code!!
     }
+}
+
+fun doManualEntry(): String {
+    return KInquirer.promptInputPassword("Enter your modrinth access token", hint = "Go to account > Settings > Security > Copy token to clipboard")
 }

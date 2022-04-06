@@ -1,11 +1,10 @@
 package com.github.p03w.modifold
 
-import com.github.p03w.modifold.ModifoldArgs.DONT
+import com.github.p03w.modifold.cli.*
+import com.github.p03w.modifold.cli.ModifoldArgsContainer.DONT
+import com.github.p03w.modifold.conversion.checkForUnknownCategories
 import com.github.p03w.modifold.core.*
-import com.github.p03w.modifold.networking.modrinth.ModrinthAPI
-import com.github.p03w.modifold.util.debug
-import com.github.p03w.modifold.util.error
-import com.github.p03w.modifold.util.log
+import com.github.p03w.modifold.modrinth_api.ModrinthAPI
 import com.xenomachina.argparser.ArgParser
 import com.xenomachina.argparser.DefaultHelpFormatter
 import com.xenomachina.argparser.mainBody
@@ -15,34 +14,35 @@ import kotlin.system.exitProcess
 fun main(args: Array<String>) {
     AnsiConsole.systemInstall()
 
-    Global.args = mainBody {
+    ModifoldArgs.args = mainBody {
         ArgParser(args, helpFormatter = DefaultHelpFormatter(prologue = Global.helpMenuPrologue))
-            .parseInto(::ModifoldArgs)
+            .parseInto(::ModifoldArgsContainer)
     }
 
-    if (!Global.args.donts.contains(DONT.MAP_CATEGORIES)) checkForUnknownCategories()
+    if (!ModifoldArgs.args.donts.contains(DONT.MAP_CATEGORIES)) {
+        checkForUnknownCategories(ModrinthAPI.getPossibleCategories().mapTo(mutableSetOf()) {it.name})
+    }
     verifyDefaultArgs()
 
-    if (!Global.args.donts.contains(DONT.VERIFY_END_USER)) {
-        println("ONLY USE THIS TOOL ON PROJECTS YOU OWN")
-        println("I built this for honest users who want to move off curseforge, I don't want to have to deal with people blaming me because someone stole their mods.")
-        println("Modrinth moderation also checks for ownership anyways, so you're unlikely to get anywhere")
-        println("Type \"yes\" if you understand this should only be used on your own projects to continue execution")
-        if (readln() != "yes") {
+    if (!ModifoldArgs.args.donts.contains(DONT.VERIFY_END_USER)) {
+        if (!userUnderstandsUsage()) {
             println("Quiting")
             exitProcess(1)
-        } else {
-            println("Continuing")
         }
     }
+
 
     ModrinthAPI.AuthToken = loginToModrinth()
 
     debug("Verifying and standardizing modrinth user")
-    val modrinthUser = ModrinthAPI.getUser()
+    val modrinthUser = try {
+        ModrinthAPI.getUser()
+    } catch (err: Throwable) {
+        error("Failed to login! Invalid access token?", err)
+    }
     log("Modrinth login successful, user is ${modrinthUser.username} (${modrinthUser.id})")
 
-    val curseforgeProjects = collectCurseforgeProjects(Global.args.curseforgeIDs)
+    val curseforgeProjects = collectCurseforgeProjects(ModifoldArgs.args.curseforgeIDs)
 
     if (curseforgeProjects.isEmpty()) {
         error("No projects to transfer")
@@ -51,6 +51,7 @@ fun main(args: Array<String>) {
     if (curseforgeProjects.isEmpty()) {
         error("No projects to transfer")
     }
+    exitProcess(0)
 
     log("Done matching projects, beginning transfer")
 

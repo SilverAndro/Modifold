@@ -1,12 +1,15 @@
 package com.github.p03w.modifold.core
 
-import com.github.p03w.modifold.networking.curseforge.CurseforgeProject
-import com.github.p03w.modifold.networking.modrinth.ModrinthMod
-import com.github.p03w.modifold.util.withSpinner
+import com.github.p03w.modifold.cli.withSpinner
+import com.github.p03w.modifold.curseforge_schema.CurseforgeProject
+import com.github.p03w.modifold.curseforge_schema.ModrinthProject
 import com.kennethlange.nlp.similarity.TextSimilarity
 import com.kennethlange.nlp.similarity.TokenizerImpl
 
-class SimilarProjectFinder(private val modrinthProjects: List<ModrinthMod>, curseforgeProjects: List<CurseforgeProject>) {
+class SimilarProjectFinder(
+    private val modrinthProjects: List<ModrinthProject>,
+    curseforgeProjects: List<CurseforgeProject>
+) {
     private val ts = TextSimilarity(TokenizerImpl(IGNORED_WORDS))
 
     val ignoredIDs: MutableSet<String> = mutableSetOf()
@@ -24,7 +27,7 @@ class SimilarProjectFinder(private val modrinthProjects: List<ModrinthMod>, curs
         }
     }
 
-    fun findSimilar(cfProject: CurseforgeProject): ModrinthMod? {
+    fun findSimilar(cfProject: CurseforgeProject): ModrinthProject? {
         val closest = ts.getSimilarDocuments("$CURSEFORGE_PREFIX:${cfProject.id}").firstOrNull {
             it.startsWith(MODRINTH_PREFIX) && !ignoredIDs.contains(it.split(":")[1])
         } ?: return null
@@ -175,6 +178,7 @@ class SimilarProjectFinder(private val modrinthProjects: List<ModrinthMod>, curs
             "configuration",
             "github",
             "curseforge",
+            "modrinth",
             "wiki",
             "data",
             "features",

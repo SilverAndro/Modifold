@@ -3,7 +3,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.6.20"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     application
 }
@@ -17,21 +17,49 @@ repositories {
 }
 
 // Dependency versions
-val ktor_version = "1.6.7"
+val ktor_version = "1.6.8"
 val argparse_version = "2.0.7"
-val slf4j_nop_version = "1.7.33"
+val slf4j_nop_version = "1.7.36"
 val jansi_version = "2.4.0"
+val inquirer_version = "0.1.0"
+
+val commonImplementaions = setOf(
+    "io.ktor:ktor-client-core:$ktor_version",
+    "io.ktor:ktor-client-cio:$ktor_version",
+    "io.ktor:ktor-client-gson:$ktor_version",
+    "io.ktor:ktor-server-netty:$ktor_version",
+    "org.slf4j:slf4j-nop:$slf4j_nop_version",
+
+    "org.fusesource.jansi:jansi:$jansi_version",
+    "com.xenomachina:kotlin-argparser:$argparse_version",
+    "com.github.kotlin-inquirer:kotlin-inquirer:$inquirer_version",
+    "com.github.kenneth-lange:java-nlp-text-similarity:-SNAPSHOT",
+)
 
 dependencies {
-    implementation("io.ktor:ktor-client-core:$ktor_version")
-    implementation("io.ktor:ktor-client-cio:$ktor_version")
-    implementation("io.ktor:ktor-client-gson:$ktor_version")
-    implementation("io.ktor:ktor-server-netty:$ktor_version")
-    implementation("org.slf4j:slf4j-nop:$slf4j_nop_version")
+    commonImplementaions.forEach {
+        implementation(it)
+    }
 
-    implementation("com.xenomachina:kotlin-argparser:$argparse_version")
-    implementation("org.fusesource.jansi:jansi:$jansi_version")
-    implementation("com.github.kenneth-lange:java-nlp-text-similarity:-SNAPSHOT")
+    subprojects.forEach {
+        implementation(it)
+    }
+}
+
+subprojects {
+    pluginManager.apply("org.jetbrains.kotlin.jvm")
+    repositories {
+        mavenCentral()
+        maven("https://jitpack.io")
+    }
+    dependencies {
+        commonImplementaions.forEach {
+            implementation(it)
+        }
+    }
+    tasks.withType<KotlinCompile> {
+        kotlinOptions.jvmTarget = "1.8"
+    }
 }
 
 tasks.withType<KotlinCompile> {

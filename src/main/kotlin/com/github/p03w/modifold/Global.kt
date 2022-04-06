@@ -1,12 +1,6 @@
 package com.github.p03w.modifold
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-
 object Global {
-    lateinit var args: ModifoldArgs
-    val scope = CoroutineScope(Dispatchers.Default)
-
     const val helpMenuPrologue =
         "Modifold is a Kotlin CLI program for moving curseforge mods to modrinth almost completely autonomously thanks to " +
                 "the incredible modrinth API work by the modrinth team, " +
