@@ -5,18 +5,20 @@ import com.github.p03w.modifold.cli.ModifoldArgsContainer.DONT
 import com.github.p03w.modifold.conversion.checkForUnknownCategories
 import com.github.p03w.modifold.core.*
 import com.github.p03w.modifold.modrinth_api.ModrinthAPI
-import com.xenomachina.argparser.ArgParser
-import com.xenomachina.argparser.DefaultHelpFormatter
-import com.xenomachina.argparser.mainBody
+import com.xenomachina.argparser.*
 import org.fusesource.jansi.AnsiConsole
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
     AnsiConsole.systemInstall()
 
-    ModifoldArgs.args = mainBody {
-        ArgParser(args, helpFormatter = DefaultHelpFormatter(prologue = Global.helpMenuPrologue))
-            .parseInto(::ModifoldArgsContainer)
+    try {
+        ModifoldArgs.args = ArgParser(args, helpFormatter = DefaultHelpFormatter(prologue = Global.helpMenuPrologue)).parseInto(::ModifoldArgsContainer)
+    } catch (err: SystemExitException) {
+        log("See the help menu (-h or --help) for usage")
+        mainBody {
+            throw err
+        }
     }
 
     if (!ModifoldArgs.args.donts.contains(DONT.MAP_CATEGORIES)) {
