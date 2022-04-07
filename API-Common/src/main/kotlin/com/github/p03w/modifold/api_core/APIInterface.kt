@@ -7,12 +7,17 @@ import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 import io.ktor.client.request.forms.*
 import io.ktor.client.statement.*
+import io.ktor.util.reflect.*
 import kotlinx.coroutines.runBlocking
+import java.time.Instant
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 @Suppress("DEPRECATION")
 abstract class APIInterface {
     abstract val ratelimit: Ratelimit
     open val ratelimitRemainingHeader = ""
+    open val ratelimitResetHeader = ""
 
     val client = HttpClient(CIO) {
         install(JsonFeature)
@@ -21,26 +26,34 @@ abstract class APIInterface {
 
     fun waitUntilCanSend() {
         @Suppress("ControlFlowWithEmptyBody")
-        while (!ratelimit.canSend) { }
+        while (!ratelimit.canSend) {
+
+        }
         ratelimit.makeRequest()
     }
 
     @Deprecated("Internal only, please")
-    suspend inline fun <reified T: Any> HttpStatement.extractRatelimit(): T {
-        val response = execute()
-        val ratelimitHeader = response.headers[ratelimitRemainingHeader]
-        if (ratelimitHeader != null) {
-            debug("Got ratelimit remaining header of ${ratelimitHeader.toInt()}")
-            ratelimit.remainingRequests = ratelimitHeader.toInt()
+    suspend inline fun <reified T: Any> HttpResponse.extractRatelimit(): T {
+        val ratelimitRemaining = response.headers[ratelimitRemainingHeader]
+        val ratelimitReset = response.headers[ratelimitResetHeader]
+        if (ratelimitRemaining != null) {
+            debug("Got ratelimit remaining header of ${ratelimitRemaining.toInt()}")
+            ratelimit.remainingRequests = ratelimitRemaining.toInt()
         }
-        return receive()
+        if (ratelimitReset != null) {
+            debug("Got ratelimit reset header of ${ratelimitReset.toInt()}")
+            // +200ms to make sure we don't undershoot
+            ratelimit.secondsUntilReset = ratelimitReset.toInt().seconds + 200.milliseconds
+            ratelimit.resetClock = Instant.now()
+        }
+        return call.receive(typeInfo<T>()) as T
     }
 
     inline fun <reified T : Any> getWithoutAuth(url: String): T {
         return runBlocking {
             waitUntilCanSend()
             debug("GET | $url")
-            return@runBlocking client.get<HttpStatement>(url).extractRatelimit()
+            return@runBlocking client.get<HttpResponse>(url).extractRatelimit()
         }
     }
 
@@ -48,7 +61,7 @@ abstract class APIInterface {
         return runBlocking {
             waitUntilCanSend()
             debug("GET(AUTHED) | $url")
-            return@runBlocking client.get<HttpStatement>(url) { attachAuth() }.extractRatelimit()
+            return@runBlocking client.get<HttpResponse>(url) { attachAuth() }.extractRatelimit()
         }
     }
 
@@ -56,7 +69,7 @@ abstract class APIInterface {
         return runBlocking {
             waitUntilCanSend()
             debug("SUBMIT FORM | $url")
-            return@runBlocking client.submitForm<HttpStatement>(url) {
+            return@runBlocking client.submitForm<HttpResponse>(url) {
                 attachAuth()
 
                 body = MultiPartFormDataContent(

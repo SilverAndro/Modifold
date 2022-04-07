@@ -21,13 +21,15 @@ data class ModrinthProjectCreate private constructor(
     val source_url: Any? = null,
     val wiki_url: Any? = null,
     val discord_url: Any? = null,
-    val donation_urls: List<Any> = emptyList(),
+    val donation_urls: List<Any>? = null,
 
     val license_id: String,
     val license_url: Any? = null,
 
+    val project_type: String = "mod",
     val initial_versions: List<Any> = emptyList(),
     val is_draft: Boolean = true,
+    val gallery_items: List<Any>? = null
 ) {
     companion object {
         fun of(curseforgeProject: CurseforgeProject): ModrinthProjectCreate {

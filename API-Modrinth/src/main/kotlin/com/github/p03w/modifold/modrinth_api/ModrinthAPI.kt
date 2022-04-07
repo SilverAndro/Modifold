@@ -13,8 +13,9 @@ import java.net.URL
 import kotlin.time.Duration.Companion.milliseconds
 
 object ModrinthAPI : APIInterface() {
-    override val ratelimit = Ratelimit(50.milliseconds, false)
+    override val ratelimit = Ratelimit(150.milliseconds, false)
     override val ratelimitRemainingHeader = "X-Ratelimit-Remaining"
+    override val ratelimitResetHeader = "X-Ratelimit-Reset"
     lateinit var AuthToken: String
 
     override fun HttpRequestBuilder.attachAuth() {
@@ -52,7 +53,7 @@ object ModrinthAPI : APIInterface() {
 
     fun makeProject(create: ModrinthProjectCreate, project: CurseforgeProject): ModrinthProject {
         return postForm("$root/project") {
-            append("data", GsonBuilder().serializeNulls().create().toJson(create))
+            append("data", GsonBuilder().serializeNulls().disableHtmlEscaping().create().toJson(create))
 
             appendInput("icon", headersOf(HttpHeaders.ContentDisposition, "filename=icon.png")) {
                 buildPacket {
