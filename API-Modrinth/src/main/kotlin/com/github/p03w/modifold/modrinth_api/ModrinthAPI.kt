@@ -74,23 +74,19 @@ object ModrinthAPI : APIInterface() {
     }
 
     fun addProjectImage(project: ModrinthProject, attachment: CurseforgeAttachment) {
-        post<HttpResponse>(
-            "https://api.modrinth.com/v2/project/${project.id}/gallery?" +
-                    "ext=${attachment.getExt()}&" +
-                    "featured=false&" +
-                    "title=${attachment.title}&" +
-                    "description=${attachment.description}"
-        ) {
+        post<HttpResponse>("$root/project/${project.id}/gallery") {
             contentType(ContentType("image", attachment.getExt()))
+
+            parameter("ext", attachment.getExt())
+            parameter("featured", false)
+            parameter("title", attachment.title)
+            parameter("description", attachment.description)
+
             body = URL(attachment.url).openStream().readAllBytes()
         }
     }
 
-    fun makeProjectVersion(mod: ModrinthProject, file: CurseforgeFile, stream: BufferedInputStream, project: CurseforgeProject): Boolean {
-        if (getLoaders(file).isEmpty()) {
-            warn("Cannot transfer ${file.fileName} as it has no specified loaders, which is illegal on modrinth")
-            return false
-        }
+    fun makeProjectVersion(mod: ModrinthProject, file: CurseforgeFile, stream: BufferedInputStream, project: CurseforgeProject) {
         postForm<HttpResponse>("$root/version") {
             val upload = ModrinthVersionUpload(
                 mod_id = mod.id,
@@ -106,7 +102,10 @@ object ModrinthAPI : APIInterface() {
                     1 -> "release"
                     else -> throw IllegalArgumentException("Unknown release type ${file.releaseType} on file https://www.curseforge.com/minecraft/mc-mods/${project.slug}/files/${file.id}")
                 },
-                loaders = getLoaders(file)
+                loaders = getLoaders(file).takeUnless { it.isEmpty() } ?: run {
+                    warn("${file.fileName} has no specified loaders, defaulting to forge")
+                    listOf("forge")
+                }
             )
             append("data", GsonBuilder().serializeNulls().create().toJson(upload))
 
@@ -124,7 +123,6 @@ object ModrinthAPI : APIInterface() {
                 }
             }
         }
-        return true
     }
 
     @Suppress("SpellCheckingInspection")

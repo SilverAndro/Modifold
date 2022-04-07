@@ -1,8 +1,6 @@
 package com.github.p03w.modifold.core
 
-import com.github.p03w.modifold.cli.debug
-import com.github.p03w.modifold.cli.error
-import com.github.p03w.modifold.cli.withSpinner
+import com.github.p03w.modifold.cli.*
 import com.github.p03w.modifold.curseforge_api.CurseforgeAPI
 import com.github.p03w.modifold.curseforge_schema.CurseforgeProject
 import com.github.p03w.modifold.curseforge_schema.ModrinthProject
@@ -59,14 +57,15 @@ fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthProject>
                     localCopy.inputStream().buffered()
                 } else { buffered }
 
-                val successful = ModrinthAPI.makeProjectVersion(
-                    modrinthProject,
-                    file,
-                    stream,
-                    project
-                )
-
-                if (!successful) {
+                try {
+                    ModrinthAPI.makeProjectVersion(
+                        modrinthProject,
+                        file,
+                        stream,
+                        project
+                    )
+                } catch (err: Throwable) {
+                    log("Failed to upload ${file.fileName}! ${err.localizedMessage}".error().toString())
                     it.fail()
                 }
             }
