@@ -53,10 +53,15 @@ class ModifoldArgsContainer(parser: ArgParser) {
 
     val defaultLoaders by parser.adding(
         "-L", "--loader",
-        help = "What loader to add to mods by default, can be repeated",
+        help = "What loader to add to mods by default if no loader is specified, defaults to forge",
         argName = "DEFAULT_LOADER"
-    ) { lowercase(Locale.getDefault()) }
-    
+    ) { lowercase(Locale.getDefault()) }.default(listOf("forge"))
+
+    val fileLimit by parser.storing(
+        "-f", "--file-limit",
+        help = "Limits how many files to transfer (recent first), -1 (default) to disable/transfer all"
+    ) { toInt() }.default(-1)
+
     //
     // Required args
     //

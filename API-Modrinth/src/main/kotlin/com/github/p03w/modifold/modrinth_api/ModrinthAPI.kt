@@ -2,6 +2,7 @@ package com.github.p03w.modifold.modrinth_api
 
 import com.github.p03w.modifold.api_core.APIInterface
 import com.github.p03w.modifold.api_core.Ratelimit
+import com.github.p03w.modifold.cli.ModifoldArgs
 import com.github.p03w.modifold.cli.warn
 import com.github.p03w.modifold.curseforge_schema.*
 import com.google.gson.GsonBuilder
@@ -103,8 +104,8 @@ object ModrinthAPI : APIInterface() {
                     else -> throw IllegalArgumentException("Unknown release type ${file.releaseType} on file https://www.curseforge.com/minecraft/mc-mods/${project.slug}/files/${file.id}")
                 },
                 loaders = getLoaders(file).takeUnless { it.isEmpty() } ?: run {
-                    warn("${file.fileName} has no specified loaders, defaulting to forge")
-                    listOf("forge")
+                    warn("${file.fileName} has no specified loaders, using default loader(s) ${ModifoldArgs.args.defaultLoaders}")
+                    ModifoldArgs.args.defaultLoaders
                 }
             )
             append("data", GsonBuilder().serializeNulls().create().toJson(upload))

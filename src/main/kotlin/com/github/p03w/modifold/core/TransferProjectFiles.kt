@@ -23,6 +23,12 @@ fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthProject>
             CurseforgeAPI.getProjectFiles(project.id) {
                 error("Could not get curseforge files for project ${project.display()}")
             }.sortedBy { Instant.parse(it.fileDate + "Z") }
+        }.let {
+            if (ModifoldArgs.args.fileLimit > -1) {
+                it.takeLast(ModifoldArgs.args.fileLimit)
+            } else {
+                it
+            }
         }
 
         val modrinthProject = ModrinthAPI.getProjectInfo(mapping[project]!!.id)
@@ -35,19 +41,24 @@ fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthProject>
                 return@nextAttach
             }
 
-            withSpinner("Transferring ${it.title} to gallery") { _ ->
+            withSpinner("Transferring ${it.title} to gallery") { spinner ->
                 if (toSave.contains(InformationToSave.IMAGES)) {
                     debug("Saving ${it.url} as ${it.title}.${it.getExt()}")
                     val localCopy = File("ModifoldSaved/${project.display()}/images/${it.title}.${it.getExt()}").make()
                     Files.copy(URL(it.url).openStream(), localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
                 }
-                ModrinthAPI.addProjectImage(modrinthProject, it)
+                try {
+                    ModrinthAPI.addProjectImage(modrinthProject, it)
+                } catch (err: Throwable) {
+                    log("Failed to add ${it.title} to gallery! ${err.localizedMessage}".error().toString())
+                    spinner.fail()
+                }
             }
 
         }
 
         files.forEach { file ->
-            withSpinner("Transferring ${file.fileName}") {
+            withSpinner("Transferring ${file.fileName}") { spinner ->
                 val buffered = CurseforgeAPI.getFileStream(file).buffered()
 
                 val stream = if (toSave.contains(InformationToSave.VERSIONS)) {
@@ -66,7 +77,7 @@ fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthProject>
                     )
                 } catch (err: Throwable) {
                     log("Failed to upload ${file.fileName}! ${err.localizedMessage}".error().toString())
-                    it.fail()
+                    spinner.fail()
                 }
             }
         }
