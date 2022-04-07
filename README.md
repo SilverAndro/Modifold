@@ -20,10 +20,15 @@ steps, with notices along the way, so please read carefully to avoid confusion. 
 projects, *not* individual files.
 
 Some other common flags would be `-l LICENSE` to set the default license and `-d DISCORD` to set the discord link.
-License field will be verified by the modrinth team so make sure you update it, its "arr" by default.
+License field will be verified by the modrinth team so make sure you update it, its `arr` by default.
 
 **Remember to update the projects once created!** Modifold creates the mods as drafts so that you can add sources,
 issues, delete if needed, ect.
+
+
+### What next?
+
+If you want to automate publishing to modrinth I recommend the [minotaur](https://github.com/modrinth/minotaur) plugin (maintained by the modrinth team) or [mc-publish](https://github.com/Kir-Antipov/mc-publish).
 
 ### FAQ
 
@@ -42,6 +47,6 @@ in the future, but we'll cross that bridge if we come to it.
 
 ---
 
-Q: Modrinth v2 api? / Mod-pack support?
+Q: Modpack support?
 
-A: When on stable modrinth, this tool will get a rewrite to support those. Support will not be instantaneous, obviously.
+A: Not really viable, please see the amazing [packwiz](https://github.com/packwiz/packwiz) project for a tool that is capable of that.
