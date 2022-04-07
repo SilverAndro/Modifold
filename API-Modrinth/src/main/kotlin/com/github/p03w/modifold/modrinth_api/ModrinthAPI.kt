@@ -2,6 +2,7 @@ package com.github.p03w.modifold.modrinth_api
 
 import com.github.p03w.modifold.api_core.APIInterface
 import com.github.p03w.modifold.api_core.Ratelimit
+import com.github.p03w.modifold.cli.warn
 import com.github.p03w.modifold.curseforge_schema.*
 import com.google.gson.GsonBuilder
 import io.ktor.client.request.*
@@ -20,7 +21,7 @@ object ModrinthAPI : APIInterface() {
 
     override fun HttpRequestBuilder.attachAuth() {
         headers {
-            append("Authorization", AuthToken)
+            append(HttpHeaders.Authorization, AuthToken)
         }
     }
 
@@ -72,7 +73,24 @@ object ModrinthAPI : APIInterface() {
             .map { it.lowercase() }
     }
 
-    fun makeProjectVersion(mod: ModrinthProject, file: CurseforgeFile, stream: BufferedInputStream, project: CurseforgeProject) {
+    fun addProjectImage(project: ModrinthProject, attachment: CurseforgeAttachment) {
+        post<HttpResponse>(
+            "https://api.modrinth.com/v2/project/${project.id}/gallery?" +
+                    "ext=${attachment.getExt()}&" +
+                    "featured=false&" +
+                    "title=${attachment.title}&" +
+                    "description=${attachment.description}"
+        ) {
+            contentType(ContentType("image", attachment.getExt()))
+            body = URL(attachment.url).openStream().readAllBytes()
+        }
+    }
+
+    fun makeProjectVersion(mod: ModrinthProject, file: CurseforgeFile, stream: BufferedInputStream, project: CurseforgeProject): Boolean {
+        if (getLoaders(file).isEmpty()) {
+            warn("Cannot transfer ${file.fileName} as it has no specified loaders, which is illegal on modrinth")
+            return false
+        }
         postForm<HttpResponse>("$root/version") {
             val upload = ModrinthVersionUpload(
                 mod_id = mod.id,
@@ -106,6 +124,7 @@ object ModrinthAPI : APIInterface() {
                 }
             }
         }
+        return true
     }
 
     @Suppress("SpellCheckingInspection")

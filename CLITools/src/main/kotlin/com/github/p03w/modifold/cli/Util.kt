@@ -3,16 +3,18 @@ package com.github.p03w.modifold.cli
 import kotlinx.coroutines.cancel
 import org.fusesource.jansi.Ansi
 
-inline fun <T> withSpinner(message: String, action: () -> T): T {
+inline fun <T> withSpinner(message: String, action: (Spinner) -> T): T {
     val spinner = Spinner(message)
     val result: T
     try {
-        result = action()
+        result = action(spinner)
     } catch (err: Exception) {
         spinner.fail()
         throw err
     }
-    spinner.done()
+    if (Spinner.spinnerActive) {
+        spinner.done()
+    }
     return result
 }
 

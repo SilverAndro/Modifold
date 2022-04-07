@@ -27,13 +27,25 @@ fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthProject>
             }.sortedBy { Instant.parse(it.fileDate + "Z") }
         }
 
-        if (toSave.contains(InformationToSave.IMAGES)) {
-            debug("Saving attachments for project")
-            project.attachments.forEach {
-                debug("Saving ${it.url} as ${it.url.hashCode()}")
-                val localCopy = File("ModifoldSaved/${project.display()}/images/${it.url.hashCode()}").make()
+        val modrinthProject = ModrinthAPI.getProjectInfo(mapping[project]!!.id)
+
+        project.attachments.forEach nextAttach@{
+            if (toSave.contains(InformationToSave.IMAGES) && it.isDefault) {
+                debug("Saving ${it.url} as project_icon.png")
+                val localCopy = File("ModifoldSaved/${project.display()}/images/project_icon.png").make()
                 Files.copy(URL(it.url).openStream(), localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                return@nextAttach
             }
+
+            withSpinner("Transferring ${it.title} to gallery") { _ ->
+                if (toSave.contains(InformationToSave.IMAGES)) {
+                    debug("Saving ${it.url} as ${it.title}.${it.getExt()}")
+                    val localCopy = File("ModifoldSaved/${project.display()}/images/${it.title}.${it.getExt()}").make()
+                    Files.copy(URL(it.url).openStream(), localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                }
+                ModrinthAPI.addProjectImage(modrinthProject, it)
+            }
+
         }
 
         files.forEach { file ->
@@ -47,12 +59,16 @@ fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthProject>
                     localCopy.inputStream().buffered()
                 } else { buffered }
 
-                ModrinthAPI.makeProjectVersion(
-                    ModrinthAPI.getProjectInfo(mapping[project]!!.id),
+                val successful = ModrinthAPI.makeProjectVersion(
+                    modrinthProject,
                     file,
                     stream,
                     project
                 )
+
+                if (!successful) {
+                    it.fail()
+                }
             }
         }
         println()

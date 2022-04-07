@@ -65,10 +65,21 @@ abstract class APIInterface {
         }
     }
 
+    inline fun <reified T : Any> post(url: String, crossinline action: HttpRequestBuilder.() -> Unit): T {
+        return runBlocking {
+            waitUntilCanSend()
+            debug("POST(AUTHED) | $url")
+            return@runBlocking client.post<HttpResponse>(url) {
+                attachAuth()
+                action()
+            }.extractRatelimit()
+        }
+    }
+
     inline fun <reified T : Any> postForm(url: String, crossinline action: FormBuilder.() -> Unit): T {
         return runBlocking {
             waitUntilCanSend()
-            debug("SUBMIT FORM | $url")
+            debug("SUBMITFORM(AUTHED) | $url")
             return@runBlocking client.submitForm<HttpResponse>(url) {
                 attachAuth()
 
