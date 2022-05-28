@@ -34,6 +34,7 @@ fun main(args: Array<String>) {
     }
 
 
+    // Start actual flow with login
     ModrinthAPI.AuthToken = loginToModrinth()
 
     debug("Verifying and standardizing modrinth user")
@@ -57,11 +58,12 @@ fun main(args: Array<String>) {
     log("Done matching projects")
 
     val toSave = getInfoToSaveLocally()
+    val toTransfer = getFilesToTransfer()
 
     val projectMapping = createModrinthProjects(curseforgeProjects)
 
     log("Beginning file transfer")
-    transferProjectFiles(projectMapping, toSave)
+    transferProjectFiles(projectMapping, toSave, toTransfer)
 
     log("Done! Don't forget to fix up the created mods and submit for approval!")
 

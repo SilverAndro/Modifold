@@ -18,8 +18,8 @@ fun collectCurseforgeProjects(ids: List<Int>): MutableList<CurseforgeProject> {
             return@forEach
         }
 
-        if (projectData.categorySection.name != "Mods") {
-            warn("Skipping project id $id (${projectData.name}) because its category is \"${projectData.categorySection.name}\" not \"Mods\"")
+        if (projectData.categories.any { it.id == 4471 /* Hardcoded category ID for modpacks */ }) {
+            warn("Skipping project id $id (${projectData.name}) because its a modpack")
         } else if (!projectData.authors.any { it.name.lowercase() == ModifoldArgs.args.curseforgeUsername.lowercase() }) {
             warn("Skipping project id $id (${projectData.name}) because none of its authors are ${ModifoldArgs.args.curseforgeUsername}")
         } else {

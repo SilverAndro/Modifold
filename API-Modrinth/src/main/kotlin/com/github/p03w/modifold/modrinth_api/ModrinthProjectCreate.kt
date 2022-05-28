@@ -41,7 +41,10 @@ data class ModrinthProjectCreate private constructor(
                 discord_url = ModifoldArgs.args.discordServer.takeUnless { it.isEmpty() },
                 categories = if (ModifoldArgs.args.donts.contains(DONT.MAP_CATEGORIES)) emptyList() else mapCategories(
                     curseforgeProject.categories
-                )
+                ),
+                issues_url = curseforgeProject.links.issuesUrl,
+                source_url = curseforgeProject.links.sourceUrl,
+                wiki_url = curseforgeProject.links.wikiUrl
             )
         }
     }

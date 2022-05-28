@@ -60,9 +60,7 @@ object ModrinthAPI : APIInterface() {
             appendInput("icon", headersOf(HttpHeaders.ContentDisposition, "filename=icon.png")) {
                 buildPacket {
                     writeFully(
-                        URL(project.attachments.first { it.isDefault }.url)
-                            .openStream()
-                            .readAllBytes()
+                        URL(project.logo.url).openStream().readAllBytes()
                     )
                 }
             }
@@ -70,11 +68,11 @@ object ModrinthAPI : APIInterface() {
     }
 
     private fun getLoaders(file: CurseforgeFile): List<String> {
-        return file.gameVersion.filterNot { MC_SEMVER.matches(it) || it.lowercase().contains("java") }
+        return file.gameVersions.filterNot { MC_SEMVER.matches(it) || it.lowercase().contains("java") }
             .map { it.lowercase() }
     }
 
-    fun addProjectImage(project: ModrinthProject, attachment: CurseforgeAttachment) {
+    fun addProjectImage(project: ModrinthProject, attachment: CurseforgeAsset) {
         post<HttpResponse>("$root/project/${project.id}/gallery") {
             contentType(ContentType("image", attachment.getExt()))
 
@@ -96,7 +94,7 @@ object ModrinthAPI : APIInterface() {
                     ?: file.fileName.removeSuffix(".jar"),
                 version_title = file.displayName,
                 version_body = "Transferred automatically from https://www.curseforge.com/minecraft/mc-mods/${project.slug}/files/${file.id}",
-                game_versions = file.gameVersion.filter { MC_SEMVER.matches(it) },
+                game_versions = file.gameVersions.filter { MC_SEMVER.matches(it) },
                 release_channel = when (file.releaseType) {
                     3 -> "alpha"
                     2 -> "beta"

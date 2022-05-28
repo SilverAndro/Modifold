@@ -36,6 +36,14 @@ fun mapCategories(curseforgeCategories: List<CurseforgeCategory>): List<String> 
 
         "Food" to "food",
 
+        "Combat / PvP" to "combat",
+
+        "Hardcore" to "challenging",
+
+        "Multiplayer" to "multiplayer",
+
+        "Quests" to "quests",
+
         if (!ModifoldArgs.args.donts.contains(DONT.CURSE_MCREATOR)) "MCreator" to "cursed" else "MCreator" to "misc"
     )
 
@@ -65,7 +73,13 @@ fun checkForUnknownCategories(known: Set<String>) {
         "food",
         "equipment",
         "misc",
-        "optimization"
+        "optimization",
+        "combat",
+        "challenging",
+        "multiplayer",
+        "quests",
+        "kitchen-sink",
+        "lightweight"
     )
 
     val missing = known subtract expected

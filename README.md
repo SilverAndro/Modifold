@@ -14,6 +14,8 @@ You will also need your curseforge username, this is used to verify the ownershi
 and will be discarded if it does not match.
 (You must be listed in the authors section)
 
+**Make sure 3rd party downloads are enabled on the project**
+
 There is a full `-h` menu, however the simplest invocation of modifold is
 simply `java -jar modifold.jar <Owner Name> <Curseforge Project IDs...>`. This will walk you through any necessary
 steps, with notices along the way, so please read carefully to avoid confusion. The tool will only move entire
@@ -42,8 +44,7 @@ embracing modrinth.
 
 Q: Is this safe to use?
 
-A: Probably! It uses the same internal API proxy that other 3rd party tools use. However, this API may be discontinued
-in the future, but we'll cross that bridge if we come to it.
+A: Probably! It uses a proxy for the official 3rd party api, so it should be capable of accessing everything in a normal way.
 
 ---
 

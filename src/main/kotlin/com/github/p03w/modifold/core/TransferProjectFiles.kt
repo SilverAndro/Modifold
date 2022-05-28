@@ -12,7 +12,11 @@ import java.nio.file.StandardCopyOption
 import java.time.Instant
 import java.util.*
 
-fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthProject>, toSave: EnumSet<InformationToSave>) {
+fun transferProjectFiles(
+    mapping: MutableMap<CurseforgeProject, ModrinthProject>,
+    toSave: EnumSet<InformationToSave>,
+    toTransfer: FileSet
+) {
     fun File.make(): File {
         mkdirs()
         return this
@@ -20,9 +24,9 @@ fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthProject>
 
     mapping.keys.forEach { project ->
         val files = withSpinner("Collecting files for ${project.display()})") {
-            CurseforgeAPI.getProjectFiles(project.id) {
+            CurseforgeAPI.getProjectFiles(project.id, toTransfer == FileSet.ALL) {
                 error("Could not get curseforge files for project ${project.display()}")
-            }.sortedBy { Instant.parse(it.fileDate + "Z") }
+            }.sortedBy { Instant.parse(it.fileDate) }
         }.let {
             if (ModifoldArgs.args.fileLimit > -1) {
                 it.takeLast(ModifoldArgs.args.fileLimit)
@@ -33,14 +37,15 @@ fun transferProjectFiles(mapping: MutableMap<CurseforgeProject, ModrinthProject>
 
         val modrinthProject = ModrinthAPI.getProjectInfo(mapping[project]!!.id)
 
-        project.attachments.forEach nextAttach@{
-            if (toSave.contains(InformationToSave.IMAGES) && it.isDefault) {
-                debug("Saving ${it.url} as project_icon.png")
-                val localCopy = File("ModifoldSaved/${project.display()}/images/project_icon.png").make()
-                Files.copy(URL(it.url).openStream(), localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                return@nextAttach
-            }
+        // Save logo
+        if (toSave.contains(InformationToSave.IMAGES)) {
+            debug("Saving ${project.logo.url} as project_icon.png")
+            val localCopy = File("ModifoldSaved/${project.display()}/images/project_icon.png").make()
+            Files.copy(URL(project.logo.url).openStream(), localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
+        }
 
+        // Transfer screenshots
+        project.screenshots.forEach nextAttach@{
             withSpinner("Transferring ${it.title} to gallery") { spinner ->
                 if (toSave.contains(InformationToSave.IMAGES)) {
                     debug("Saving ${it.url} as ${it.title}.${it.getExt()}")
