@@ -1,6 +1,5 @@
 @file:Suppress("PropertyName", "SpellCheckingInspection")
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -10,7 +9,7 @@ plugins {
 }
 
 group = "com.github.p03w"
-version = "2.1.0"
+version = "2.1.1"
 
 repositories {
     mavenCentral()
@@ -69,8 +68,4 @@ tasks.withType<KotlinCompile> {
 
 application {
     mainClass.set("com.github.p03w.modifold.MainKt")
-}
-
-tasks.withType<ShadowJar> {
-    minimize()
 }
