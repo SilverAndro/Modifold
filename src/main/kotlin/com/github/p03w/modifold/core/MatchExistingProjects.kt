@@ -6,7 +6,7 @@ import com.github.kinquirer.components.promptList
 import com.github.p03w.modifold.cli.*
 import com.github.p03w.modifold.cli.ModifoldArgsContainer.DONT
 import com.github.p03w.modifold.curseforge_schema.CurseforgeProject
-import com.github.p03w.modifold.curseforge_schema.ModrinthUser
+import com.github.p03w.modifold.modrinth_schema.ModrinthUser
 
 fun matchExistingProjects(modrinthUser: ModrinthUser, curseforgeProjects: MutableList<CurseforgeProject>) {
     if (!ModifoldArgs.args.donts.contains(DONT.VERIFY_EXISTING)) {

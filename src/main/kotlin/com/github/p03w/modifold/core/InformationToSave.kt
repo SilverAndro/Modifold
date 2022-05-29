@@ -32,12 +32,8 @@ fun getInfoToSaveLocally(): EnumSet<InformationToSave> {
         viewOptions = CheckboxViewOptions(questionMarkPrefix = "", unchecked = "[ ] ", checked = "[X] ")
     )
 
-    choices.forEach {
-        set.add(when(it) {
-            "Curseforge images" -> InformationToSave.IMAGES
-            "Version files" -> InformationToSave.VERSIONS
-            else -> return@forEach
-        })
+    choices.forEach {choice ->
+        set.add(InformationToSave.values().first { it.userFacing == choice })
     }
 
     return set

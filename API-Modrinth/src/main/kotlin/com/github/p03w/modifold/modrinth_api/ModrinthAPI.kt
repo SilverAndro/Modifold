@@ -5,6 +5,7 @@ import com.github.p03w.modifold.api_core.Ratelimit
 import com.github.p03w.modifold.cli.ModifoldArgs
 import com.github.p03w.modifold.cli.warn
 import com.github.p03w.modifold.curseforge_schema.*
+import com.github.p03w.modifold.modrinth_schema.*
 import com.google.gson.GsonBuilder
 import io.ktor.client.request.*
 import io.ktor.client.statement.*

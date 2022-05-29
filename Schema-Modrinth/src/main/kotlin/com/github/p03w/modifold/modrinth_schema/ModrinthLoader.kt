@@ -1,4 +1,4 @@
-package com.github.p03w.modifold.curseforge_schema
+package com.github.p03w.modifold.modrinth_schema
 
 data class ModrinthLoader(
     val icon: String,

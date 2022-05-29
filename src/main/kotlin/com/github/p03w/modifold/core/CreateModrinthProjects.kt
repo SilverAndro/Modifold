@@ -3,7 +3,7 @@ package com.github.p03w.modifold.core
 import com.github.p03w.modifold.cli.log
 import com.github.p03w.modifold.cli.withSpinner
 import com.github.p03w.modifold.curseforge_schema.CurseforgeProject
-import com.github.p03w.modifold.curseforge_schema.ModrinthProject
+import com.github.p03w.modifold.modrinth_schema.ModrinthProject
 import com.github.p03w.modifold.modrinth_api.ModrinthAPI
 import com.github.p03w.modifold.modrinth_api.ModrinthProjectCreate
 
