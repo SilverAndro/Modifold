@@ -42,9 +42,9 @@ data class ModrinthProjectCreate private constructor(
                     curseforgeProject.categories
                 ),
                 discord_url = ModifoldArgs.args.discordServer.takeIf { it.isNotBlank() },
-                issues_url = curseforgeProject.links.issuesUrl.takeIf { it.isNotBlank() },
-                source_url = curseforgeProject.links.sourceUrl.takeIf { it.isNotBlank() },
-                wiki_url = curseforgeProject.links.wikiUrl.takeIf { it.isNotBlank() }
+                issues_url = curseforgeProject.links.issuesUrl.takeIf { it?.isNotBlank() == true },
+                source_url = curseforgeProject.links.sourceUrl.takeIf { it?.isNotBlank() == true },
+                wiki_url = curseforgeProject.links.wikiUrl.takeIf { it?.isNotBlank() == true }
             )
         }
     }
