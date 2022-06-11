@@ -33,6 +33,7 @@ data class ModrinthProjectCreate private constructor(
 ) {
     companion object {
         fun of(curseforgeProject: CurseforgeProject): ModrinthProjectCreate {
+            val copyLinks = ModifoldArgs.args.donts.contains(DONT.COPY_LINKS).not()
             return ModrinthProjectCreate(
                 title = curseforgeProject.name,
                 slug = curseforgeProject.slug,
@@ -41,10 +42,18 @@ data class ModrinthProjectCreate private constructor(
                 categories = if (ModifoldArgs.args.donts.contains(DONT.MAP_CATEGORIES)) emptyList() else mapCategories(
                     curseforgeProject.categories
                 ),
-                discord_url = ModifoldArgs.args.discordServer.takeIf { it.isNotBlank() },
-                issues_url = curseforgeProject.links.issuesUrl?.takeIf { it.isNotBlank() },
-                source_url = curseforgeProject.links.sourceUrl?.takeIf { it.isNotBlank() },
-                wiki_url = curseforgeProject.links.wikiUrl?.takeIf { it.isNotBlank() }
+                discord_url = ModifoldArgs.args.discordServer.takeIf {
+                    it.isNotBlank() && copyLinks
+                },
+                issues_url = curseforgeProject.links.issuesUrl?.takeIf {
+                    it.isNotBlank() && copyLinks
+                },
+                source_url = curseforgeProject.links.sourceUrl?.takeIf {
+                    it.isNotBlank() && copyLinks
+                },
+                wiki_url = curseforgeProject.links.wikiUrl?.takeIf {
+                    it.isNotBlank() && copyLinks
+                }
             )
         }
     }
