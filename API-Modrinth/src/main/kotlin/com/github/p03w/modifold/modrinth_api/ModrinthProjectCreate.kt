@@ -38,13 +38,13 @@ data class ModrinthProjectCreate private constructor(
                 slug = curseforgeProject.slug,
                 description = curseforgeProject.summary,
                 license_id = ModifoldArgs.args.defaultLicense,
-                discord_url = ModifoldArgs.args.discordServer.takeUnless { it.isEmpty() },
                 categories = if (ModifoldArgs.args.donts.contains(DONT.MAP_CATEGORIES)) emptyList() else mapCategories(
                     curseforgeProject.categories
                 ),
-                issues_url = curseforgeProject.links.issuesUrl,
-                source_url = curseforgeProject.links.sourceUrl,
-                wiki_url = curseforgeProject.links.wikiUrl
+                discord_url = ModifoldArgs.args.discordServer.takeIf { it.isNotBlank() },
+                issues_url = curseforgeProject.links.issuesUrl.takeIf { it.isNotBlank() },
+                source_url = curseforgeProject.links.sourceUrl.takeIf { it.isNotBlank() },
+                wiki_url = curseforgeProject.links.wikiUrl.takeIf { it.isNotBlank() }
             )
         }
     }
