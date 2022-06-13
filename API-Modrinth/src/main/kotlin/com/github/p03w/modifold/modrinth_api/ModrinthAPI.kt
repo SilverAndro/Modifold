@@ -95,7 +95,7 @@ object ModrinthAPI : APIInterface() {
                     ?: file.fileName.removeSuffix(".jar"),
                 version_title = file.displayName,
                 version_body = "Transferred automatically from https://www.curseforge.com/minecraft/mc-mods/${project.slug}/files/${file.id}",
-                game_versions = file.gameVersions.filter { MC_SEMVER.matches(it) },
+                game_versions = getGameVersions(file),
                 release_channel = when (file.releaseType) {
                     3 -> "alpha"
                     2 -> "beta"
@@ -125,10 +125,30 @@ object ModrinthAPI : APIInterface() {
         }
     }
 
+    private fun getGameVersions(file: CurseforgeFile): List<String> {
+        val out = mutableSetOf<String>()
+        file.gameVersions.forEach {
+            if (MC_SEMVER.matches(it)) {
+                if (SNAPSHOT_REGEX.containsMatchIn(it)) {
+                    warn(
+                        "Dropping snapshot version $it because curseforge" +
+                                " snapshots are not as precise as modrinth's and cannot" +
+                                "be accurately represented!"
+                    )
+                } else {
+                    out.add(it)
+                }
+            }
+        }
+        return out.toList()
+    }
+
     @Suppress("SpellCheckingInspection")
     private val SEMVER =
         Regex("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:-((?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\\.(?:0|[1-9]\\d*|\\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\\+([0-9a-zA-Z-]+(?:\\.[0-9a-zA-Z-]+)*))?")
 
     @Suppress("SpellCheckingInspection")
     val MC_SEMVER = Regex("(0|[1-9]\\d*)\\.(0|[1-9]\\d*)(?:\\.(0|[1-9]\\d*))?(?:-[sS]napshots?)?")
+
+    val SNAPSHOT_REGEX = Regex("-[sS]napshots?")
 }
