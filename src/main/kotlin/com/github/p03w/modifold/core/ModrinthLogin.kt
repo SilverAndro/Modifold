@@ -70,9 +70,9 @@ suspend fun doWebFlow(): String {
         Desktop.getDesktop().browse(URI.create(deviceCode.verification_uri))
     }
 
-    return withContext(Dispatchers.IO) {
-        log("Waiting for approval...")
-        lateinit var authToken: String
+    log("Waiting for approval...")
+    lateinit var authToken: String
+    withContext(Dispatchers.IO) {
         launch {
             while (isActive) {
                 delay(deviceCode.interval.seconds + 100.milliseconds)
@@ -89,9 +89,9 @@ suspend fun doWebFlow(): String {
                 }
             }
         }
-        client.close()
-        return@withContext authToken
     }
+    client.close()
+    return authToken
 }
 
 fun doManualEntry(): String {
