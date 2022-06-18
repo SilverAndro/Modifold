@@ -9,7 +9,7 @@ import com.xenomachina.argparser.*
 import org.fusesource.jansi.AnsiConsole
 import kotlin.system.exitProcess
 
-fun main(args: Array<String>) {
+suspend fun main(args: Array<String>) {
     AnsiConsole.systemInstall()
 
     try {

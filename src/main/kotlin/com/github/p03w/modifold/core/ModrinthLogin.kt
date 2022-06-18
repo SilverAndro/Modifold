@@ -5,18 +5,22 @@ import com.github.kinquirer.components.ListViewOptions
 import com.github.kinquirer.components.promptInputPassword
 import com.github.kinquirer.components.promptList
 import com.github.p03w.modifold.cli.*
-import com.github.p03w.modifold.modrinth_api.ModrinthAPI
-import io.ktor.application.*
+import com.github.p03w.modifold.core.github_schema.AuthToken
+import com.github.p03w.modifold.core.github_schema.DeviceCode
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.features.json.*
+import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.response.*
-import io.ktor.routing.*
-import io.ktor.server.engine.*
-import io.ktor.server.netty.*
+import kotlinx.coroutines.*
 import java.awt.Desktop
 import java.net.URI
 import kotlin.system.exitProcess
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.ExperimentalTime
 
-fun loginToModrinth(): String {
+suspend fun loginToModrinth(): String {
     if (ModifoldArgs.args.modrinthToken != null) {
         log("Token was passed through CLI, using that")
         return ModifoldArgs.args.modrinthToken!!
@@ -41,48 +45,58 @@ fun showCLIExplainer(): Nothing {
     exitProcess(0)
 }
 
-fun doWebFlow(): String {
+@OptIn(ExperimentalTime::class)
+suspend fun doWebFlow(): String {
     if (!Desktop.getDesktop().isSupported(Desktop.Action.BROWSE) && ModifoldArgs.args.modrinthToken == null) {
         error("Your system does not support starting a web browser! Cannot do web flow.")
     }
 
-    debug("Starting local webserver")
+    debug("Starting github request client")
+    val client = HttpClient(CIO) {
+        install(JsonFeature)
+    }
 
-    var code: String? = null
-    val server = embeddedServer(Netty, port = 2822) {
-        routing {
-            get("/") {
-                code = this.context.parameters["code"]
-                if (code != null) {
-                    call.respondText("Thanks! You can close this tab and go back to modifold now")
-                } else {
-                    call.respondText(
-                        status = HttpStatusCode(400, "No code parameter in URL"),
-                        text = "No code parameter in URL"
-                    )
+    debug("POSTing github for device code")
+    val deviceCode: DeviceCode = client.post("https://github.com/login/device/code") {
+        accept(ContentType("application", "json"))
+        parameter("client_id", "7eacdcb00a21e6d6a847")
+    }
+
+    debug("Device code is ${deviceCode.device_code}")
+    debug("User code is ${deviceCode.user_code}")
+
+    await("Enter the code ${deviceCode.user_code.bold()} on ${deviceCode.verification_uri} (press enter to open)")
+    withContext(Dispatchers.IO) {
+        Desktop.getDesktop().browse(URI.create(deviceCode.verification_uri))
+    }
+
+    return withContext(Dispatchers.IO) {
+        log("Waiting for approval...")
+        lateinit var authToken: String
+        launch {
+            while (isActive) {
+                delay(deviceCode.interval.seconds + 100.milliseconds)
+                val response: AuthToken = client.post("https://github.com/login/oauth/access_token") {
+                    accept(ContentType("application", "json"))
+                    parameter("client_id", "7eacdcb00a21e6d6a847")
+                    parameter("device_code", deviceCode.device_code)
+                    parameter("grant_type", "urn:ietf:params:oauth:grant-type:device_code")
+                }
+                if (response.access_token != null) {
+                    log("Got access token!")
+                    authToken = response.access_token
+                    cancel()
                 }
             }
         }
-    }
-
-    server.start()
-
-    debug("Opening login flow")
-    Desktop.getDesktop().browse(URI.create("${ModrinthAPI.root}/auth/init?url=http://127.0.0.1:2822"))
-
-    await("Press enter to continue")
-
-    debug("Code is $code")
-
-    server.stop(200, 500)
-
-    if (code == null) {
-        error("No authorization code was provided!")
-    } else {
-        return code!!
+        client.close()
+        return@withContext authToken
     }
 }
 
 fun doManualEntry(): String {
-    return KInquirer.promptInputPassword("Enter your modrinth access token", hint = "Go to account > Settings > Security > Copy token to clipboard")
+    return KInquirer.promptInputPassword(
+        "Enter your modrinth access token",
+        hint = "Go to account > Settings > Security > Copy token to clipboard"
+    )
 }
