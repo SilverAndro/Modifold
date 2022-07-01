@@ -52,6 +52,11 @@ class ModifoldArgsContainer(parser: ArgParser) {
         help = "The discord server link to add to each mod page"
     ).default("")
 
+    val donationLinks by parser.adding(
+        "--donation",
+        help = "The sponsor/donation link to add to each mod page"
+    ).default(listOf(""))
+
     val defaultLoaders by parser.adding(
         "-L", "--loader",
         help = "What loader to add to mods by default if no loader is specified, defaults to forge",
