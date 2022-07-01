@@ -4,6 +4,7 @@ import com.github.p03w.modifold.cli.ModifoldArgs
 import com.github.p03w.modifold.cli.ModifoldArgsContainer.DONT
 import com.github.p03w.modifold.conversion.mapCategories
 import com.github.p03w.modifold.curseforge_schema.CurseforgeProject
+import com.github.p03w.modifold.modrinth_schema.ModrinthDonationURL
 
 @Suppress("DataClassPrivateConstructor")
 data class ModrinthProjectCreate private constructor(
@@ -44,6 +45,21 @@ data class ModrinthProjectCreate private constructor(
                 ),
                 discord_url = ModifoldArgs.args.discordServer.takeIf {
                     it.isNotBlank() && copyLinks
+                },
+                donation_urls = ModifoldArgs.args.donationLinks.map {
+                    if ("paypal" in it) {
+                        ModrinthDonationURL("paypal", "Paypal", it)
+                    } else if ("patreon" in it) {
+                        ModrinthDonationURL("pateron", "Patreon", it)
+                    } else if ("buymeacoffee" in it) {
+                        ModrinthDonationURL("bmac", "Buy Me a Coffee", it)
+                    } else if ("github" in it) {
+                        ModrinthDonationURL("github", "GitHub Sponsors", it)
+                    } else if ("ko-fi" in it) {
+                        ModrinthDonationURL("ko-fi", "Ko-fi", it)
+                    } else {
+                        ModrinthDonationURL("other", "Other", it)
+                    }
                 },
                 issues_url = curseforgeProject.links.issuesUrl?.takeIf {
                     it.isNotBlank() && copyLinks
