@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.github.p03w"
-version = "2.1.6"
+version = "2.2.1"
 
 repositories {
     mavenCentral()
@@ -68,4 +68,20 @@ tasks.withType<KotlinCompile> {
 
 application {
     mainClass.set("com.github.p03w.modifold.MainKt")
+}
+
+task("embedVersion") {
+    doLast {
+        val file = File("src/main/resources/version.txt")
+        file.delete()
+        file.parentFile.mkdirs()
+        file.createNewFile()
+        file.writer().use {
+            it.write(version.toString())
+        }
+    }
+}
+
+tasks.build {
+    dependsOn("embedVersion")
 }

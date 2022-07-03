@@ -19,7 +19,7 @@ abstract class APIInterface {
     open val ratelimitRemainingHeader = ""
     open val ratelimitResetHeader = ""
 
-    val client = HttpClient(CIO) {
+    open val client = HttpClient(CIO) {
         install(JsonFeature)
     }
     open fun HttpRequestBuilder.attachAuth() {}

@@ -4,9 +4,15 @@ import com.github.p03w.modifold.api_core.APIInterface
 import com.github.p03w.modifold.api_core.Ratelimit
 import com.github.p03w.modifold.cli.ModifoldArgs
 import com.github.p03w.modifold.cli.warn
-import com.github.p03w.modifold.curseforge_schema.*
+import com.github.p03w.modifold.curseforge_schema.CurseforgeAsset
+import com.github.p03w.modifold.curseforge_schema.CurseforgeFile
+import com.github.p03w.modifold.curseforge_schema.CurseforgeProject
 import com.github.p03w.modifold.modrinth_schema.*
 import com.google.gson.GsonBuilder
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.features.*
+import io.ktor.client.features.json.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
@@ -15,11 +21,28 @@ import java.io.BufferedInputStream
 import java.net.URL
 import kotlin.time.Duration.Companion.milliseconds
 
+
 object ModrinthAPI : APIInterface() {
     override val ratelimit = Ratelimit(150.milliseconds, false)
     override val ratelimitRemainingHeader = "X-Ratelimit-Remaining"
     override val ratelimitResetHeader = "X-Ratelimit-Reset"
     lateinit var AuthToken: String
+
+    fun getUserAgent(): String {
+        return "SilverAndro/Modifold/${getFileVersion()} (Silver <3#0955)"
+    }
+
+    private fun getFileVersion(): String {
+        return this.javaClass.getResourceAsStream("/version.txt")
+            ?.bufferedReader()?.readText() ?: "Unknown Version"
+    }
+
+    override val client = HttpClient(CIO) {
+        install(JsonFeature)
+        install(UserAgent) {
+            agent = getUserAgent()
+        }
+    }
 
     override fun HttpRequestBuilder.attachAuth() {
         headers {
