@@ -18,11 +18,6 @@ class ModifoldArgsContainer(parser: ArgParser) {
         help = "Enable debug/verbose mode"
     )
 
-    val migrateDescription by parser.flagging(
-        "--description",
-        help = "Enable migration of mod descriptions from curseforge to modrinth"
-    )
-
     val modrinthToken by parser.storing(
         "--token",
         help = "Sets the modrinth access token manually, bypassing the web-auth flow"
@@ -36,7 +31,8 @@ class ModifoldArgsContainer(parser: ArgParser) {
                 "1 to disable checking existing modrinth mods, " +
                 "2 to change the mcreator->cursed mapping to mcreator->misc, " +
                 "3 to disable category mapping entirely, " +
-                "4 to disable copying links",
+                "4 to disable copying links, " +
+                "5 to disable migration of project bodies",
         argName = "DONT_INDEX"
     ) { DONT.values()[toInt()] }
 
@@ -93,6 +89,7 @@ class ModifoldArgsContainer(parser: ArgParser) {
         VERIFY_EXISTING,
         CURSE_MCREATOR,
         MAP_CATEGORIES,
-        COPY_LINKS
+        COPY_LINKS,
+        MIGRATE_DESCRIPTION
     }
 }
