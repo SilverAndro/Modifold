@@ -50,7 +50,7 @@ object ModrinthAPI : APIInterface() {
         }
     }
 
-    const val root = "https://api.modrinth.com/v2"
+    const val root = "https://staging-api.modrinth.com/v2"
 
     fun getPossibleLicenses(): List<String> {
         val shortLicenses = getWithoutAuth<List<ModrinthShortLicense>>("$root/tag/license")

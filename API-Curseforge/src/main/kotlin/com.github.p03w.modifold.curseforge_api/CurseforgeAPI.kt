@@ -3,10 +3,7 @@ package com.github.p03w.modifold.curseforge_api
 import com.github.p03w.modifold.api_core.APIInterface
 import com.github.p03w.modifold.api_core.Ratelimit
 import com.github.p03w.modifold.cli.ModifoldArgs
-import com.github.p03w.modifold.curseforge_schema.CurseforgeFile
-import com.github.p03w.modifold.curseforge_schema.CurseforgeProject
-import com.github.p03w.modifold.curseforge_schema.FilesWrapper
-import com.github.p03w.modifold.curseforge_schema.ProjectWrapper
+import com.github.p03w.modifold.curseforge_schema.*
 import java.io.InputStream
 import java.net.URL
 import kotlin.time.Duration.Companion.milliseconds
@@ -34,6 +31,15 @@ object CurseforgeAPI : APIInterface() {
             err.printStackTrace()
             onFailed()
             emptyList()
+        }
+    }
+
+    fun getProjectDescription(id: Int): String? {
+        return try {
+            getWithoutAuth<CurseforgeDescription>("$root/mods/$id/description").data
+        } catch (ignored: Exception) {
+            ignored.printStackTrace()
+            null
         }
     }
 
