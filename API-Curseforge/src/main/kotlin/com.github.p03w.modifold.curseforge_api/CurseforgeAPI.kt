@@ -37,7 +37,7 @@ object CurseforgeAPI : APIInterface() {
     fun getProjectDescription(id: Int): String? {
         return try {
             getWithoutAuth<CurseforgeDescription>("$root/mods/$id/description").data
-        } catch (ignored: Exception) {
+        } catch (err: Exception) {
             ignored.printStackTrace()
             null
         }
