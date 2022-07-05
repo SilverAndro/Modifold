@@ -38,7 +38,7 @@ object CurseforgeAPI : APIInterface() {
         return try {
             getWithoutAuth<CurseforgeDescription>("$root/mods/$id/description").data
         } catch (err: Exception) {
-            ignored.printStackTrace()
+            err.printStackTrace()
             null
         }
     }
