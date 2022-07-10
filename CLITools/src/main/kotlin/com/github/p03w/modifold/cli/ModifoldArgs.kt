@@ -31,7 +31,8 @@ class ModifoldArgsContainer(parser: ArgParser) {
                 "1 to disable checking existing modrinth mods, " +
                 "2 to change the mcreator->cursed mapping to mcreator->misc, " +
                 "3 to disable category mapping entirely, " +
-                "4 to disable copying links",
+                "4 to disable copying links, " +
+                "5 to disable migration of project bodies",
         argName = "DONT_INDEX"
     ) { DONT.values()[toInt()] }
 
@@ -88,6 +89,7 @@ class ModifoldArgsContainer(parser: ArgParser) {
         VERIFY_EXISTING,
         CURSE_MCREATOR,
         MAP_CATEGORIES,
-        COPY_LINKS
+        COPY_LINKS,
+        MIGRATE_DESCRIPTION
     }
 }
