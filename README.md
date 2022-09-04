@@ -14,7 +14,7 @@ find that ID. You will need the numerical ID of every curseforge project you wan
 
 You will also need your curseforge username, this is used to verify the ownership of each mod being moved to modrinth,
 and will be discarded if it does not match.
-(You must be listed as an *author*, its possible to be listed as a contributor but not an author)
+(You must be listed as an *author*, it's possible to be listed as a contributor but not an author)
 
 **Make sure 3rd party downloads are enabled on the project**
 

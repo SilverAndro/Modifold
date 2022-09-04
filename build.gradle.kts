@@ -82,6 +82,6 @@ task("embedVersion") {
     }
 }
 
-tasks.build {
+tasks.classes {
     dependsOn("embedVersion")
 }
