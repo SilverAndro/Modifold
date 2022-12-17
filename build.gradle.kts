@@ -3,13 +3,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.7.0"
+    kotlin("jvm") version "1.7.20"
     id("com.github.johnrengelman.shadow") version "7.1.2"
     application
 }
 
 group = "com.github.p03w"
-version = "2.2.2"
+version = "2.2.3"
 
 repositories {
     mavenCentral()

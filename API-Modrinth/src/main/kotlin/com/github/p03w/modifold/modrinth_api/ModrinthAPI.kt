@@ -92,8 +92,13 @@ object ModrinthAPI : APIInterface() {
     }
 
     private fun getLoaders(file: CurseforgeFile): List<String> {
-        return file.gameVersions.filterNot { MC_SEMVER.matches(it) || it.lowercase().contains("java") }
-            .map { it.lowercase() }
+        return file.gameVersions.filterNot {
+            val lowercase = it.lowercase()
+            MC_SEMVER.matches(it) ||
+            lowercase.contains("java") ||
+            lowercase == "client" ||
+            lowercase == "server"
+        }.map { it.lowercase() }
     }
 
     fun addProjectImage(project: ModrinthProject, attachment: CurseforgeAsset) {
