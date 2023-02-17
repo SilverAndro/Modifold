@@ -10,13 +10,18 @@ import kotlin.time.Duration.Companion.milliseconds
 
 object CurseforgeAPI : APIInterface() {
     override val ratelimit = Ratelimit(ModifoldArgs.args.curseforgeSpeed.milliseconds, true)
-    const val root = "https://cfproxy.fly.dev/v1"
+    const val root = "https://api.cfwidget.com"
+
+    private val cache = mutableMapOf<Int, CurseforgeProject?>()
+
     fun getProjectData(id: Int): CurseforgeProject? {
-        return try {
-            getWithoutAuth<ProjectWrapper>("$root/mods/$id").data
-        } catch (ignored: Exception) {
-            ignored.printStackTrace()
-            null
+        return cache.computeIfAbsent(id) {
+            try {
+                getWithoutAuth<ProjectWrapper>("$root/$id").data
+            } catch (ignored: Exception) {
+                ignored.printStackTrace()
+                null
+            }
         }
     }
 

@@ -15,7 +15,8 @@ import java.util.*
 fun transferProjectFiles(
     mapping: MutableMap<CurseforgeProject, ModrinthProject>,
     toSave: EnumSet<InformationToSave>,
-    toTransfer: FileSet
+    toTransfer: FileSet,
+    dummy: Boolean = false
 ) {
     fun File.make(): File {
         mkdirs()
@@ -35,57 +36,80 @@ fun transferProjectFiles(
             }
         }
 
-        val modrinthProject = ModrinthAPI.getProjectInfo(mapping[project]!!.id)
+        if (!dummy) {
+            val modrinthProject = ModrinthAPI.getProjectInfo(mapping[project]!!.id)
 
-        // Save logo
-        if (toSave.contains(InformationToSave.IMAGES)) {
-            debug("Saving ${project.logo.url} as project_icon.png")
-            val localCopy = File("ModifoldSaved/${project.display()}/images/project_icon.png").make()
-            Files.copy(URL(project.logo.url).openStream(), localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
-        }
+            // Save logo
+            if (toSave.contains(InformationToSave.IMAGES)) {
+                debug("Saving ${project.logo.url} as project_icon.png")
+                val localCopy = File("ModifoldSaved/${project.display()}/images/project_icon.png").make()
+                Files.copy(URL(project.logo.url).openStream(), localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
 
-        // Transfer screenshots
-        project.screenshots.forEach nextAttach@{
-            withSpinner("Transferring ${it.title} to gallery") { spinner ->
-                if (toSave.contains(InformationToSave.IMAGES)) {
-                    debug("Saving ${it.url} as ${it.title}.${it.getExt()}")
-                    val localCopy = File("ModifoldSaved/${project.display()}/images/${it.title}.${it.getExt()}").make()
-                    Files.copy(URL(it.url).openStream(), localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                }
-                try {
-                    ModrinthAPI.addProjectImage(modrinthProject, it)
-                } catch (err: Throwable) {
-                    log("Failed to add ${it.title} to gallery! ${err.localizedMessage}".error().toString())
-                    spinner.fail()
+            // Transfer screenshots
+            project.screenshots.forEach nextAttach@{
+                withSpinner("Transferring ${it.title} to gallery") { spinner ->
+                    if (toSave.contains(InformationToSave.IMAGES)) {
+                        debug("Saving ${it.url} as ${it.title}.${it.getExt()}")
+                        val localCopy =
+                            File("ModifoldSaved/${project.display()}/images/${it.title}.${it.getExt()}").make()
+                        Files.copy(URL(it.url).openStream(), localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                    }
+                    try {
+                        ModrinthAPI.addProjectImage(modrinthProject, it)
+                    } catch (err: Throwable) {
+                        log("Failed to add ${it.title} to gallery! ${err.localizedMessage}".error().toString())
+                        spinner.fail()
+                    }
                 }
             }
 
-        }
+            files.forEach { file ->
+                withSpinner("Transferring ${file.fileName}") { spinner ->
+                    val buffered = CurseforgeAPI.getFileStream(file).buffered()
 
-        files.forEach { file ->
-            withSpinner("Transferring ${file.fileName}") { spinner ->
-                val buffered = CurseforgeAPI.getFileStream(file).buffered()
+                    val stream = if (toSave.contains(InformationToSave.VERSIONS)) {
+                        debug("Saving version to disk")
+                        val localCopy = File("ModifoldSaved/${project.display()}/versions/${file.fileName}").make()
+                        Files.copy(buffered, localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                        localCopy.inputStream().buffered()
+                    } else {
+                        buffered
+                    }
 
-                val stream = if (toSave.contains(InformationToSave.VERSIONS)) {
-                    debug("Saving version to disk")
-                    val localCopy = File("ModifoldSaved/${project.display()}/versions/${file.fileName}").make()
-                    Files.copy(buffered, localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
-                    localCopy.inputStream().buffered()
-                } else { buffered }
+                    try {
+                        ModrinthAPI.makeProjectVersion(
+                            modrinthProject,
+                            file,
+                            stream,
+                            project
+                        )
+                    } catch (err: Throwable) {
+                        log("Failed to upload ${file.fileName}! ${err.localizedMessage}".error().toString())
+                        spinner.fail()
+                    }
+                }
+            }
+            println()
+        } else {
+            // Save logo
+            if (toSave.contains(InformationToSave.IMAGES)) {
+                debug("Saving ${project.logo.url} as project_icon.png")
+                val localCopy = File("ModifoldSaved/${project.display()}/images/project_icon.png").make()
+                Files.copy(URL(project.logo.url).openStream(), localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            }
 
-                try {
-                    ModrinthAPI.makeProjectVersion(
-                        modrinthProject,
-                        file,
-                        stream,
-                        project
-                    )
-                } catch (err: Throwable) {
-                    log("Failed to upload ${file.fileName}! ${err.localizedMessage}".error().toString())
-                    spinner.fail()
+            // Transfer screenshots
+            if (toSave.contains(InformationToSave.IMAGES)) {
+                project.screenshots.forEach {
+                    withSpinner("Saving gallery image ${it.title}") { spinner ->
+                        debug("Saving ${it.url} as ${it.title}.${it.getExt()}")
+                        val localCopy =
+                            File("ModifoldSaved/${project.display()}/images/${it.title}.${it.getExt()}").make()
+                        Files.copy(URL(it.url).openStream(), localCopy.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                    }
                 }
             }
         }
-        println()
     }
 }

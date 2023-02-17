@@ -13,3 +13,13 @@ fun userUnderstandsUsage(): Boolean {
     )
     return KInquirer.promptConfirm("I understand this tool should only be used on my own projects")
 }
+
+fun userUnderstandsUsageAlternative(): Boolean {
+    println(
+        """
+        ONLY USE THIS TOOL ON PROJECTS YOU OWN
+        I built this for honest users who want to move off curseforge, and not for anyone else, as that has significant legal complications.
+    """.trimIndent()
+    )
+    return KInquirer.promptConfirm("I understand this tool should only be used on my own projects")
+}

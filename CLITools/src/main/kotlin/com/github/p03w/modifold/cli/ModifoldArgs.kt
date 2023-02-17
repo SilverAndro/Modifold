@@ -69,6 +69,11 @@ class ModifoldArgsContainer(parser: ArgParser) {
         help = "Limits how many files to transfer (recent first), -1 (default) to disable/transfer all"
     ) { toInt() }.default(-1)
 
+    val noModrinth by parser.flagging(
+        "--no-modrinth",
+        help = "Disables all functionality related to modrinth"
+    )
+
     //
     // Required args
     //

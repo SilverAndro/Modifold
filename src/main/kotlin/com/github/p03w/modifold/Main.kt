@@ -21,6 +21,12 @@ suspend fun main(args: Array<String>) {
         }
     }
 
+    if (ModifoldArgs.args.noModrinth) {
+        noModrinthFlow()
+        AnsiConsole.systemUninstall()
+        return
+    }
+
     if (!ModifoldArgs.args.donts.contains(DONT.MAP_CATEGORIES)) {
         checkForUnknownCategories(ModrinthAPI.getPossibleCategories().mapTo(mutableSetOf()) {it.name})
     }
